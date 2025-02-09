@@ -1,0 +1,11 @@
+{
+  "name": "docx-editor",
+  "description": "Web-based editor for docx.js with live preview",
+  "version": "0.1.0",
+  "private": false,
+  "license": "MIT",
+  "packageManager": "pnpm@10.2.1",
+  "scripts": {
+    "test": "echo \"Warning: no test specified!\" && exit 0"
+  }
+}
