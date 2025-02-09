@@ -1,13 +1,15 @@
 # JetBrains IDE
-.idea/
+.idea
 
 # Node.js
 **/node_modules
 pnpm-lock.yaml
 
 # Next.js
-.next/
-out/
+.next
+out
+.cache
+public
 
 # misc
 .DS_Store
