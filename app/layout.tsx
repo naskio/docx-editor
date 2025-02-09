@@ -1,7 +1,9 @@
-import type { Metadata } from 'next';
 import React from 'react';
+import type { Metadata } from 'next';
+// styling
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css'; // These styles apply to every route in the application
+import { ThemeProvider } from '@/components/theme-provider';
 
 // Define the font classes
 const geistSans = Geist({
@@ -22,8 +24,17 @@ export default function RootLayout({
   const fontClassNames = `${geistSans.variable} ${geistMono.variable} antialiased`;
 
   return (
-    <html lang='en'>
-      <body className={fontClassNames}>{children}</body>
+    <html lang='en' suppressHydrationWarning>
+      <body className={fontClassNames}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

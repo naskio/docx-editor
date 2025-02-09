@@ -1,39 +1,90 @@
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { GithubIcon, StarIcon, PlayIcon } from 'lucide-react';
+import { Logo } from '@/components/logo';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
-export default function Page() {
+const Hero = () => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const repositoryUrl = `https://github.com/naskio/docx-editor`;
   return (
-    <>
-      <div className='grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20'>
-        <main className='dark:bg-gray row-start-2 flex flex-col items-center gap-8 sm:items-start'>
-          <Image
-            src={`${basePath}/logo.svg`}
-            alt='Docx Editor logo'
-            width={256}
-            height={64}
-            priority
-          />
-          <h1 className='text-3xl font-bold underline dark:bg-amber-700 dark:text-white'>
-            Hello, Next.js with Tailwind CSS!
-          </h1>
-          <Button variant='default'>Get started</Button>
-        </main>
-        <div className='rounded-lg bg-white px-6 py-8 ring shadow-xl ring-gray-900/5 dark:bg-gray-800'>
-          <div>
-            <span className='inline-flex items-center justify-center rounded-md bg-indigo-500 p-2 shadow-lg'>
-              <svg className='h-6 w-6 stroke-white'>X</svg>
-            </span>
+    <section className='flex h-screen flex-col items-center justify-center'>
+      <div className='container'>
+        <div
+          className='absolute inset-x-0 top-0 -z-10 flex h-full w-full items-center justify-center dark:invert'
+          style={{
+            background: `url(${basePath}/magic-pattern.svg) 50% / cover repeat`,
+          }}
+        />
+        <div className='mx-auto flex max-w-5xl flex-col items-center'>
+          <div className='z-10 flex flex-col items-center gap-6 text-center'>
+            <Logo width={288} height={72} />
+            <div>
+              <h1 className='mb-6 text-2xl font-bold text-pretty lg:text-5xl'>
+                Create word documents in the browser
+              </h1>
+              <p className='text-muted-foreground mx-2 sm:mx-0 lg:text-xl'>
+                A browser-based editor that helps you create .docx files using{' '}
+                <Link
+                  href='https://docx.js.org/'
+                  className='hover:underline'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  Docx.js
+                </Link>{' '}
+                with live preview.
+              </p>
+            </div>
+            <div className='mt-4 flex justify-center gap-4'>
+              <Link
+                href='/playground'
+                className={cn(
+                  buttonVariants({ variant: 'default', size: 'lg' }),
+                  `h-14 rounded-4xl px-6 text-lg sm:px-12`
+                )}
+              >
+                Get started <PlayIcon className='ml-2 h-5! w-5!' />
+              </Link>
+              <Link
+                href={repositoryUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                className={cn(
+                  buttonVariants({ variant: 'outline', size: 'lg' }),
+                  `h-14 rounded-4xl px-6 text-lg sm:px-12`
+                )}
+              >
+                GitHub <GithubIcon className='ml-2 h-5! w-5!' />
+              </Link>
+            </div>
+            <p className='text-muted-foreground mx-2 mt-20 text-center text-lg sm:mx-0 lg:text-left'>
+              Support the project on{' '}
+              <Link
+                href={repositoryUrl}
+                className='hover:underline'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                GitHub
+              </Link>
+              <Link
+                href={repositoryUrl}
+                className={cn(
+                  buttonVariants({ variant: 'ghost', size: 'icon' }),
+                  `ml-0 text-amber-400 sm:ml-1`
+                )}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <StarIcon />
+              </Link>
+            </p>
           </div>
-          <h3 className='mt-5 text-base font-medium tracking-tight text-gray-900 dark:text-white'>
-            Writes upside-down
-          </h3>
-          <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
-            The Zero Gravity Pen can be used to write in any orientation,
-            including upside-down. It even works in outer space.
-          </p>
         </div>
       </div>
-    </>
+    </section>
   );
-}
+};
+
+export default Hero;
