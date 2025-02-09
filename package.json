@@ -9,11 +9,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint:check": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "prettier --check .",
+    "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test": "echo \"Warning: no test specified!\" && exit 0"
+    "test": "echo \"Warning: no test specified!\" && exit 0",
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "^15.1.6",
@@ -28,6 +29,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "eslint-config-prettier": "^10.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
     "postcss": "^8.5.1",
     "prettier": "3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",

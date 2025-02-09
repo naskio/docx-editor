@@ -16,3 +16,9 @@ public
 
 # typescript
 next-env.d.ts
+
+# husky
+.husky
+
+# prettier
+.prettierignore
