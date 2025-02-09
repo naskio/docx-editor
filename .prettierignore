@@ -22,3 +22,4 @@ next-env.d.ts
 
 # prettier
 .prettierignore
+.gitignore
