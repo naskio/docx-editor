@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import React from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css'; // These styles apply to every route in the application
@@ -26,3 +27,9 @@ export default function RootLayout({
     </html>
   );
 }
+
+// HTML metadata
+export const metadata: Metadata = {
+  title: 'Docx Editor',
+  description: `Browser-based editor for creating .docx files using JS/TS with live preview`,
+};
