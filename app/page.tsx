@@ -17,7 +17,7 @@ export default function Page() {
           <h1 className='text-3xl font-bold underline dark:bg-amber-700 dark:text-white'>
             Hello, Next.js with Tailwind CSS!
           </h1>
-          <Button>Get started</Button>
+          <Button variant='default'>Get started</Button>
         </main>
         <div className='rounded-lg bg-white px-6 py-8 ring shadow-xl ring-gray-900/5 dark:bg-gray-800'>
           <div>

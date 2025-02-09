@@ -1,9 +1,10 @@
 @import 'tailwindcss';
-
 @plugin 'tailwindcss-animate';
 
+/* Enable to toggle between light and dark themes using the `dark` class */
 @custom-variant dark (&:is(.dark *));
 
+/* Define the custom properties for the theme */
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -91,12 +92,14 @@
   }
 }
 
+/* Set the default font family for the body */
 @layer utilities {
   body {
     font-family: Arial, Helvetica, sans-serif;
   }
 }
 
+/* Define the color palette for the light and dark themes */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -170,6 +173,7 @@
   }
 }
 
+/* Apply the base styles to all elements + the body only */
 @layer base {
   * {
     @apply border-border;
