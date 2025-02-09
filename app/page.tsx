@@ -4,7 +4,7 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 
-const Hero = () => {
+const HeroPage = () => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const repositoryUrl = `https://github.com/naskio/docx-editor`;
   return (
@@ -87,4 +87,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default HeroPage;
