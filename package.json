@@ -10,6 +10,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "test": "echo \"Warning: no test specified!\" && exit 0"
   },
   "dependencies": {
@@ -18,10 +21,13 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@types/node": "22.13.1",
     "@types/react": "19.0.8",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
+    "eslint-config-prettier": "^10.0.1",
+    "prettier": "3.4.2",
     "typescript": "5.7.3"
   }
 }
