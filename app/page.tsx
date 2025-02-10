@@ -5,7 +5,7 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 
-const HeroPage = () => {
+export default function HeroPage() {
   const {
     serverRuntimeConfig: { basePath, repositoryUrl },
   } = getConfig();
@@ -87,6 +87,4 @@ const HeroPage = () => {
       </div>
     </section>
   );
-};
-
-export default HeroPage;
+}

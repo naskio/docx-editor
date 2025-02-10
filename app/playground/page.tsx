@@ -1,11 +1,9 @@
 import { Metadata } from 'next';
 import { Panels } from '@/components/playground/panels';
 
-export function PlaygroundPage() {
+export default function PlaygroundPage() {
   return <Panels />;
 }
-
-export default PlaygroundPage;
 
 export const metadata: Metadata = {
   title: 'Playground',
