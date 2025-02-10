@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 
 export default function HeroPage() {
   const {
-    serverRuntimeConfig: { basePath, repositoryUrl },
+    publicRuntimeConfig: { basePath, repositoryUrl },
   } = getConfig();
   return (
     <section className='flex h-screen flex-col items-center justify-center'>

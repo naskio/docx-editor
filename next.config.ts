@@ -6,10 +6,11 @@ const nextConfig: NextConfig = {
   trailingSlash: true, // Optional: Change links `/me` -> `/me/` and emit `/me.html` -> `/me/index.html`
   skipTrailingSlashRedirect: false, // Optional: Prevent automatic `/me` -> `/me/`, instead preserve `href`
   distDir: 'out', // default
-  serverRuntimeConfig: {
+  publicRuntimeConfig: {
     // Will only be available on the server side
     basePath: process.env.BASE_PATH || '',
     repositoryUrl: `https://github.com/naskio/docx-editor`,
+    twitterUrl: `https://twitter.com/naskdev`,
   },
 };
 
