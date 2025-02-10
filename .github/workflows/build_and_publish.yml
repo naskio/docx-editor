@@ -32,8 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set NEXT_PUBLIC_BASE_PATH to environment
-        run: echo "NEXT_PUBLIC_BASE_PATH=/$(basename ${{ github.repository }})" >> $GITHUB_ENV
+      - name: Set BASE_PATH to environment
+        run: echo "BASE_PATH=/$(basename ${{ github.repository }})" >> $GITHUB_ENV
 
       - uses: pnpm/action-setup@v4
 

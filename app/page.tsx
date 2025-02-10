@@ -1,12 +1,14 @@
 import Link from 'next/link';
+import getConfig from 'next/config';
 import { GithubIcon, StarIcon, PlayIcon } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 
 const HeroPage = () => {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  const repositoryUrl = `https://github.com/naskio/docx-editor`;
+  const {
+    serverRuntimeConfig: { basePath, repositoryUrl },
+  } = getConfig();
   return (
     <section className='flex h-screen flex-col items-center justify-center'>
       <div className='container'>

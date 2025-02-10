@@ -1,4 +1,6 @@
 import React from 'react';
+import { setConfig } from 'next/config';
+import config from '../next.config';
 import '@testing-library/jest-dom'; // extends jest expect with jest-dom matchers
 
 // Mock lucide-react icons to avoid jest compilation error
@@ -13,3 +15,6 @@ jest.mock('lucide-react', () => {
     }
   );
 });
+
+// Make sure you can use "publicRuntimeConfig" within tests.
+setConfig(config);
