@@ -3,5 +3,5 @@ export default function PlaygroundLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section>{children}</section>;
+  return <section className='h-screen'>{children}</section>;
 }

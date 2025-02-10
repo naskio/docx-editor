@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
+import { Panels } from '@/components/playground/panels';
 
-function PlaygroundPage() {
-  return <div>Playground</div>;
+export function PlaygroundPage() {
+  return <Panels />;
 }
 
 export default PlaygroundPage;
