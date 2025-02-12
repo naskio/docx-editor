@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -10,30 +10,76 @@ import {
 import { FileIcon, FilePlusIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import { useDocumentsStore } from '@/lib/providers/documents-store-provider';
+import React, { useRef, useState } from 'react';
+import { useGlobalStore } from '@/lib/store-provider';
 
-function DocumentItem({ uuid, name }: { name: string; uuid: string }) {
-  const { renameDocument, deleteDocument } = useDocumentsStore(
-    (state) => state
-  );
+function DocumentItem({ name }: { name: string }) {
+  const { renameDocument, deleteDocument } = useGlobalStore((state) => state);
 
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  // const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const [hasFocus, setFocus] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   return (
-    <ContextMenu onOpenChange={setIsContextMenuOpen}>
+    <ContextMenu
+      onOpenChange={(open) => {
+        if (!open) {
+          buttonRef.current?.blur();
+        } else {
+          buttonRef.current?.focus();
+        }
+        // setIsContextMenuOpen(open);
+      }}
+    >
       <ContextMenuTrigger>
-        <span
+        <Button
+          variant='ghost'
+          size='default'
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          ref={buttonRef}
           className={cn(
-            buttonVariants({ variant: 'ghost', size: 'default' }),
-            'text-sidebar-foreground w-full justify-start gap-2',
-            isContextMenuOpen && 'bg-accent text-accent-foreground'
+            'text-sidebar-foreground focus:bg-accent focus:text-accent-foreground w-full justify-start gap-2'
+            // isContextMenuOpen && 'bg-accent text-accent-foreground'
           )}
+          onDoubleClick={() => {
+            // double click => open in editor
+            console.log(`Open ${name}`);
+          }}
+          onClick={() => {
+            if (hasFocus) {
+              buttonRef.current?.blur(); // double click
+            } else {
+              buttonRef.current?.focus(); // single click
+            }
+          }}
+          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
+            console.log(e.key);
+            if (e.key === 'Enter') {
+              // Enter => Open in editor
+              console.log(`Open ${name}`);
+            }
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+              // Delete document
+              console.log(`Delete ${name}`);
+              deleteDocument(name);
+            }
+            if (e.key === 'Escape') {
+              buttonRef.current?.blur();
+            }
+          }}
         >
           <FileIcon />
           {name}
-        </span>
+        </Button>
       </ContextMenuTrigger>
       <ContextMenuContent>
+        <ContextMenuItem
+          onClick={() => {
+            console.log(`Open ${name}`);
+          }}
+        >
+          Open
+        </ContextMenuItem>
         <ContextMenuItem
           onClick={() => {
             console.log(`Download ${name}`);
@@ -43,14 +89,14 @@ function DocumentItem({ uuid, name }: { name: string; uuid: string }) {
         </ContextMenuItem>
         <ContextMenuItem
           onClick={() => {
-            renameDocument(uuid, `${new Date()}`);
+            renameDocument(name, `${new Date()}`);
           }}
         >
           Rename...
         </ContextMenuItem>
         <ContextMenuItem
           onClick={() => {
-            deleteDocument(uuid);
+            deleteDocument(name);
           }}
         >
           Delete Permanently
@@ -61,30 +107,33 @@ function DocumentItem({ uuid, name }: { name: string; uuid: string }) {
 }
 
 export function FileExplorer() {
-  const { documents, createDocument } = useDocumentsStore((state) => state);
+  const { documents, createDocument } = useGlobalStore((state) => state);
 
   return (
-    <div className='bg-sidebar flex h-full flex-col gap-2'>
-      <Button
-        className='text-sidebar-foreground w-full py-3'
-        variant='ghost'
-        size='lg'
-        onClick={() => {
-          createDocument('Untitled Document', ``);
-        }}
-      >
-        <FilePlusIcon className='mr-1' />
-        New Document...
-      </Button>
+    <div className='bg-sidebar flex h-full flex-col'>
+      <div className='p-2'>
+        <Button
+          className='text-sidebar-foreground w-full py-3'
+          variant='ghost'
+          size='lg'
+          onClick={() => {
+            console.log(`New document...`);
+            createDocument(`${new Date().getTime()}`, ``);
+          }}
+        >
+          <FilePlusIcon className='mr-1' />
+          New Document...
+        </Button>
+      </div>
       {Boolean(documents.length) && (
         <p className='text-muted-foreground ps-3 text-sm font-medium'>
           Documents
         </p>
       )}
       <ScrollArea>
-        <div className='pb-5'>
+        <div className='flex flex-col gap-y-0.5 p-3 pb-5'>
           {documents.map((doc, index) => (
-            <DocumentItem key={index} uuid={doc.uuid} name={doc.name} />
+            <DocumentItem key={index} name={doc.name} />
           ))}
         </div>
       </ScrollArea>

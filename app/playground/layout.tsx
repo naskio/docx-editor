@@ -1,4 +1,5 @@
-import { DocumentsStoreProvider } from '@/lib/providers/documents-store-provider';
+import React from 'react';
+import { GlobalStoreProvider } from '@/lib/store-provider';
 
 export default function PlaygroundLayout({
   children,
@@ -7,7 +8,7 @@ export default function PlaygroundLayout({
 }) {
   return (
     <section className='h-screen'>
-      <DocumentsStoreProvider>{children}</DocumentsStoreProvider>
+      <GlobalStoreProvider>{children}</GlobalStoreProvider>
     </section>
   );
 }
