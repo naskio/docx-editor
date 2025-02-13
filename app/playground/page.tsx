@@ -11,7 +11,7 @@ export default function PlaygroundPage() {
           <Header />
         </div>
         <Separator />
-        <div className='grow'>
+        <div className='grow overflow-hidden'>
           <DevEnv />
         </div>
       </div>
