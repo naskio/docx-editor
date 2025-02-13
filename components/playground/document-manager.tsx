@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { FilePlusIcon } from 'lucide-react';
 import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
 
-export function FileExplorer() {
+export function DocumentManager() {
   const documents = useGlobalStore((state) => state.documents);
   const [open, setOpen] = React.useState<boolean>(false);
 

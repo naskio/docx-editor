@@ -5,7 +5,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { FileExplorer } from '@/components/playground/file-explorer';
+import { DocumentManager } from '@/components/playground/document-manager';
 import { Editor } from '@/components/playground/editor';
 import { Preview } from '@/components/playground/preview';
 
@@ -16,10 +16,10 @@ export function DevEnv() {
         defaultSize={16}
         minSize={10}
         collapsible
-        id='file-explorer'
+        id='document-manager'
         order={1}
       >
-        <FileExplorer />
+        <DocumentManager />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel
