@@ -19,6 +19,7 @@ export type GlobalActions = {
   saveDocument: (name: string, content: string) => void;
   renameDocument: (oldName: string, newName: string) => void;
   openDocument: (name: string) => void;
+  closeDocument: (name: string) => void;
 };
 
 export type GlobalStore = GlobalState & GlobalActions;
@@ -53,7 +54,7 @@ export const createGlobalStore = (
                   atime: new Date(),
                 });
               }
-              return { documents: state.documents };
+              return { documents: [...state.documents] };
             }),
           deleteDocument: (name) =>
             set((state) => ({
@@ -66,7 +67,7 @@ export const createGlobalStore = (
                 doc.content = content;
                 doc.mtime = new Date();
               }
-              return { documents: state.documents };
+              return { documents: [...state.documents] };
             }),
           renameDocument: (oldName, newName) =>
             set((state) => {
@@ -75,7 +76,7 @@ export const createGlobalStore = (
                 doc.name = newName;
                 doc.ctime = new Date();
               }
-              return { documents: state.documents };
+              return { documents: [...state.documents] };
             }),
           openDocument: (name) =>
             set((state) => {
@@ -83,8 +84,11 @@ export const createGlobalStore = (
               if (doc) {
                 doc.atime = new Date();
               }
-              return { documents: state.documents };
+              return { documents: [...state.documents] };
             }),
+          closeDocument: (name) => {
+            console.log(`closeDocument: ${name}`);
+          },
         }),
         {
           name: 'global-storage', // name of the item in the storage (must be unique)

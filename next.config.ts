@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true, // Since Next.js 13.5.1, Strict Mode is true by default with app router
   basePath: process.env.BASE_PATH || '', // base path for GitHub Pages
   output: 'export', // static site generation
   trailingSlash: true, // Optional: Change links `/me` -> `/me/` and emit `/me.html` -> `/me/index.html`
