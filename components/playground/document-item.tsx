@@ -73,7 +73,14 @@ export function DocumentItem({ name }: { name: string }) {
             <ContextMenuShortcut>{isMac ? '⌘⏎' : '⌃⏎'}</ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuItem onClick={() => download(name, document?.content)}>
+          <ContextMenuItem
+            onClick={() =>
+              download(
+                `${name}.js`,
+                new Blob([document?.content || ``], { type: 'text/javascript' })
+              )
+            }
+          >
             Download...
           </ContextMenuItem>
           <ContextMenuSeparator />
