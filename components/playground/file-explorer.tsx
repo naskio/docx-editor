@@ -130,7 +130,7 @@ export function FileExplorer() {
           Documents
         </p>
       )}
-      <ScrollArea>
+      <ScrollArea className='[&>div>div]:!block'>
         <div className='flex flex-col gap-y-0.5 p-3 pb-5'>
           {documents.map((doc, index) => (
             <DocumentItem key={index} name={doc.name} />
