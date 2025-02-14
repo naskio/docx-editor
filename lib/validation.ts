@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import { templates } from '@/lib/constants';
-import { Document } from '@/lib/store';
-
-export type Mode = 'create' | 'update' | 'delete';
+import { Document, Mode } from '@/lib/types';
 
 export function isNewDocumentName(
   name: string,
@@ -14,7 +12,7 @@ export function isNewDocumentName(
     .every((doc) => doc.name !== name);
 }
 
-export function getDocumentSchema(
+export function getDocumentFormSchema(
   mode: Mode,
   isNewName: (value: string) => boolean
 ) {
@@ -45,7 +43,7 @@ export function getDocumentSchema(
     shape['template'] = z
       .string()
       .refine(
-        (value) => templates.some((template) => template.title === value),
+        (value) => templates.some((template) => template.name === value),
         `You must select a template`
       );
   }
@@ -64,7 +62,7 @@ export function getDocumentFormDefaultValues(
   if (mode === 'create')
     return {
       name: 'Untitled Document',
-      template: templates[0].title,
+      template: templates[0].name,
     };
   if (mode === 'update') return { name: selectedName };
   return {};

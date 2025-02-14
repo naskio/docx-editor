@@ -1,5 +1,7 @@
 import React from 'react';
-import { GlobalStoreProvider } from '@/lib/store-provider';
+import { DocumentsStoreProvider } from '@/store/documents-store-provider';
+import { PreviewStoreProvider } from '@/store/preview-store-provider';
+import { SettingsStoreProvider } from '@/store/settings-store-provider';
 
 export default function PlaygroundLayout({
   children,
@@ -8,7 +10,11 @@ export default function PlaygroundLayout({
 }) {
   return (
     <section className='h-screen'>
-      <GlobalStoreProvider>{children}</GlobalStoreProvider>
+      <SettingsStoreProvider>
+        <PreviewStoreProvider>
+          <DocumentsStoreProvider>{children}</DocumentsStoreProvider>
+        </PreviewStoreProvider>
+      </SettingsStoreProvider>
     </section>
   );
 }

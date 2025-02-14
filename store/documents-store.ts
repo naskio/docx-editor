@@ -1,19 +1,12 @@
 import { createStore } from 'zustand/vanilla';
 import { persist, createJSONStorage, devtools } from 'zustand/middleware';
+import { Document } from '@/lib/types';
 
-export type Document = {
-  name: string;
-  content: string;
-  mtime: Date; // when content was last changed
-  ctime: Date; // when metadata was last changed
-  atime: Date; // when file was last accessed
-};
-
-export type GlobalState = {
+export type DocumentsState = {
   documents: Document[];
 };
 
-export type GlobalActions = {
+export type DocumentsActions = {
   createDocument: (name: string, content: string) => void;
   deleteDocument: (name: string) => void;
   saveDocument: (name: string, content: string) => void;
@@ -22,22 +15,22 @@ export type GlobalActions = {
   closeDocument: (name: string) => void;
 };
 
-export type GlobalStore = GlobalState & GlobalActions;
+export type DocumentsStore = DocumentsState & DocumentsActions;
 
-export const initGlobalStore = (): GlobalState => {
+export const initDocumentsStore = (): DocumentsState => {
   return {
     documents: [],
   };
 };
 
-export const defaultInitGlobalState: GlobalState = {
-  ...initGlobalStore(),
+export const defaultInitDocumentsState: DocumentsState = {
+  ...initDocumentsStore(),
 };
 
-export const createGlobalStore = (
-  initState: GlobalState = defaultInitGlobalState
+export const createDocumentsStore = (
+  initState: DocumentsState = defaultInitDocumentsState
 ) => {
-  return createStore<GlobalStore>()(
+  return createStore<DocumentsStore>()(
     devtools(
       persist(
         (set) => ({
@@ -91,7 +84,7 @@ export const createGlobalStore = (
           },
         }),
         {
-          name: 'global-storage', // name of the item in the storage (must be unique)
+          name: 'documents-storage', // name of the item in the storage (must be unique)
           storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
         }
       )
