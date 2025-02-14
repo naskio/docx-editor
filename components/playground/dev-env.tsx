@@ -1,15 +1,14 @@
-'use client';
-
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import type { TextFile } from '@/lib/types';
 import { DocumentManager } from '@/components/playground/document-manager';
 import { Editor } from '@/components/playground/editor';
 import { Preview } from '@/components/playground/preview';
 
-export function DevEnv() {
+export function DevEnv({ templates }: { templates: TextFile[] }) {
   return (
     <ResizablePanelGroup direction='horizontal' autoSaveId='layout'>
       <ResizablePanel
@@ -19,7 +18,7 @@ export function DevEnv() {
         id='document-manager'
         order={1}
       >
-        <DocumentManager />
+        <DocumentManager templates={templates} />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel

@@ -2,8 +2,10 @@ import { Metadata } from 'next';
 import { Header } from '@/components/playground/header';
 import { Separator } from '@/components/ui/separator';
 import { DevEnv } from '@/components/playground/dev-env';
+import { loadTemplates } from '@/lib/templates';
 
 export default function PlaygroundPage() {
+  const templates = loadTemplates();
   return (
     <>
       <div className='flex h-full w-full flex-col'>
@@ -12,7 +14,7 @@ export default function PlaygroundPage() {
         </div>
         <Separator />
         <div className='grow overflow-hidden'>
-          <DevEnv />
+          <DevEnv templates={templates} />
         </div>
       </div>
     </>

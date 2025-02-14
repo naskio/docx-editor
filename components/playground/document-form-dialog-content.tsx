@@ -20,19 +20,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { templates } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import React, { useEffect, useMemo } from 'react';
-import { useGlobalStore } from '@/lib/store-provider';
+import { useDocumentsStore } from '@/store/documents-store-provider';
 import {
+  getDocumentFormSchema,
   getDocumentFormDefaultValues,
-  getDocumentSchema,
   isNewDocumentName,
-  Mode,
 } from '@/lib/validation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { Mode, TextFile } from '@/lib/types';
 
 const labels = {
   create: {
@@ -61,11 +60,13 @@ export function DocumentFormDialogContent({
   shouldReset,
   postSubmit,
   selectedName,
+  templates,
 }: {
   mode: Mode;
   shouldReset: boolean;
   postSubmit: () => void;
   selectedName?: string;
+  templates?: TextFile[];
 }) {
   const {
     documents,
@@ -74,19 +75,25 @@ export function DocumentFormDialogContent({
     deleteDocument,
     openDocument,
     closeDocument,
-  } = useGlobalStore((state) => state);
+  } = useDocumentsStore((state) => state);
 
   const schema = useMemo(
     () =>
-      getDocumentSchema(mode, (v) =>
-        isNewDocumentName(v, documents, selectedName)
+      getDocumentFormSchema(
+        mode,
+        (v) => isNewDocumentName(v, documents, selectedName),
+        templates
       ),
-    [mode, documents, selectedName]
+    [mode, documents, selectedName, templates]
   );
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: getDocumentFormDefaultValues(mode, selectedName),
+    defaultValues: getDocumentFormDefaultValues(
+      mode,
+      templates?.length ? templates[0].name : undefined,
+      selectedName
+    ),
   });
 
   useEffect(() => {
@@ -95,8 +102,9 @@ export function DocumentFormDialogContent({
 
   const onSubmit = form.handleSubmit(({ name, template }) => {
     if (mode === 'create') {
-      const templateObject = templates.find((t) => t.title === template);
-      const content: string = templateObject?.code || ``;
+      const templateObject = templates?.find((t) => t.name === template);
+      const content: string =
+        templateObject?.text || `import * as docx from 'docx';\n`;
       const newName = name as string;
       createDocument(newName, content);
       openDocument(newName);
@@ -152,9 +160,9 @@ export function DocumentFormDialogContent({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {templates.map((template, index) => (
-                        <SelectItem value={template.title} key={index}>
-                          {template.title}
+                      {templates?.map((template, index) => (
+                        <SelectItem value={template.name} key={index}>
+                          {template.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

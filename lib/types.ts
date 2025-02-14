@@ -1,3 +1,5 @@
+import { renderingLibraryOptions } from '@/lib/env';
+
 type BaseFile = {
   name: string;
   type: string;
@@ -16,11 +18,7 @@ export type BinaryFile = BaseFile & {
 
 export type Mode = 'create' | 'update' | 'delete';
 
-export type RenderingLibrary =
-  | 'docxjs'
-  | 'mammoth.js'
-  | 'Google Docs'
-  | 'Office';
+type RenderingLibrary = (typeof renderingLibraryOptions)[number];
 
 export type Settings = {
   renderingLibrary: RenderingLibrary;

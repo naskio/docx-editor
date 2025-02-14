@@ -5,6 +5,9 @@ import type { TextFile } from '@/lib/types';
 export function loadTemplates() {
   const templates: TextFile[] = [];
   const templatesFolderPath = path.join(process.cwd(), 'public', 'templates');
+  if (!fs.existsSync(templatesFolderPath)) {
+    return [];
+  }
   const files = fs.readdirSync(templatesFolderPath);
   for (const file of files) {
     if (file.endsWith('.js')) {

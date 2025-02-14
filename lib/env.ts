@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+export const renderingLibraryOptions = [
+  'docxjs',
+  'mammoth.js',
+  'Google Docs',
+  'Office',
+];
+
 const envSchema = z.object({
   basePath: z.string().default(``),
   repositoryUrl: z.string().optional(),
@@ -8,8 +15,13 @@ const envSchema = z.object({
     .string()
     .default(`docxjs,mammoth.js`)
     .transform((value) => {
-      return value?.split(',').map((item) => item.trim());
-    }),
+      return value?.split(',').map((item) => item.trim()) ?? [];
+    })
+    .refine(
+      (arr) =>
+        arr.length > 0 &&
+        arr.every((value) => renderingLibraryOptions.includes(value))
+    ),
 });
 
 export const env = envSchema.parse({

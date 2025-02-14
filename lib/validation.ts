@@ -14,7 +14,7 @@ export function isNewDocumentName(
 export function getDocumentFormSchema(
   mode: Mode,
   isNewDocumentName: (value: string) => boolean,
-  isValidTemplateName: (value: string) => boolean
+  templates?: TextFile[]
 ) {
   const shape = {};
   if (mode !== 'delete') {
@@ -39,10 +39,13 @@ export function getDocumentFormSchema(
       })
       .refine(isNewDocumentName, `Document with this name already exists`);
   }
-  if (mode === 'create') {
+  if (mode === 'create' && templates?.length) {
     shape['template'] = z
       .string()
-      .refine(isValidTemplateName, `You must select a template`);
+      .refine(
+        (v) => templates.some((t) => t.name === v),
+        `You must select a template`
+      );
   }
   return z.object(
     shape as {
@@ -54,13 +57,13 @@ export function getDocumentFormSchema(
 
 export function getDocumentFormDefaultValues(
   mode: Mode,
-  defaultTemplateName?: string,
+  defaultTemplate?: string,
   selectedName?: string
 ) {
   if (mode === 'create')
     return {
       name: 'Untitled Document',
-      template: defaultTemplateName || ``,
+      template: defaultTemplate,
     };
   if (mode === 'update') return { name: selectedName };
   return {};

@@ -8,7 +8,7 @@ export type PreviewState = {
 
 export type PreviewActions = {
   resetPreview: () => void;
-  setPreview: (out: BinaryFile) => void;
+  setPreview: (name: string, blob: Blob) => void;
 };
 
 export type PreviewStore = PreviewState & PreviewActions;
@@ -30,7 +30,17 @@ export const createPreviewStore = (
     devtools((set) => ({
       ...initState,
       resetPreview: () => set(initPreviewStore()),
-      setPreview: (out: BinaryFile) => set({ out }),
+      setPreview: (name: string, blob: Blob) =>
+        set({
+          out: {
+            name,
+            type: `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+            blob,
+            mtime: new Date(),
+            ctime: new Date(),
+            atime: new Date(),
+          },
+        }),
     }))
   );
 };

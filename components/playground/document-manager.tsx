@@ -1,20 +1,24 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
+import { useDocumentsStore } from '@/store/documents-store-provider';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useGlobalStore } from '@/lib/store-provider';
-import { DocumentItem } from '@/components/playground/document-item';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FilePlusIcon } from 'lucide-react';
+import type { TextFile } from '@/lib/types';
+import { DocumentItem } from '@/components/playground/document-item';
 import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
 
-export function DocumentManager() {
-  const documents = useGlobalStore((state) => state.documents);
-  const [open, setOpen] = React.useState<boolean>(false);
+// TODO: improve sidebar accessibility
+export function DocumentManager({ templates }: { templates: TextFile[] }) {
+  const documents = useDocumentsStore((state) => state.documents);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   return (
     <div className='bg-sidebar flex h-full flex-col'>
       <div className='p-2'>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
               className='text-sidebar-foreground w-full py-3'
@@ -28,8 +32,9 @@ export function DocumentManager() {
           <DialogContent className='sm:max-w-[425px]'>
             <DocumentFormDialogContent
               mode='create'
-              shouldReset={!open}
-              postSubmit={() => setOpen(false)}
+              shouldReset={!dialogOpen}
+              postSubmit={() => setDialogOpen(false)}
+              templates={templates}
             />
           </DialogContent>
         </Dialog>

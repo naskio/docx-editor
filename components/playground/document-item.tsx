@@ -1,4 +1,4 @@
-import { useGlobalStore } from '@/lib/store-provider';
+import { useDocumentsStore } from '@/store/documents-store-provider';
 import React, { useRef, useState } from 'react';
 import {
   ContextMenu,
@@ -11,18 +11,22 @@ import {
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { FileIcon } from 'lucide-react';
-import { isMac } from '@/lib/constants';
-import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
 import { download } from '@/lib/download';
+import { FileIcon } from 'lucide-react';
+import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
+
+export const isMac: boolean =
+  typeof window !== 'undefined'
+    ? navigator.userAgent.toUpperCase().indexOf('MAC') >= 0
+    : false;
 
 export function DocumentItem({ name }: { name: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { openDocument } = useGlobalStore((state) => state);
-  const document = useGlobalStore((state) =>
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(false);
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const { openDocument } = useDocumentsStore((state) => state);
+  const document = useDocumentsStore((state) =>
     state.documents.find((doc) => doc.name === name)
   );
 
@@ -74,12 +78,14 @@ export function DocumentItem({ name }: { name: string }) {
           </ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem
-            onClick={() =>
-              download(
-                `${name}.js`,
-                new Blob([document?.content || ``], { type: 'text/javascript' })
-              )
-            }
+            disabled={!document}
+            onClick={() => {
+              if (document)
+                download(
+                  `${document.name}.js`,
+                  new Blob([document.text], { type: document.type })
+                );
+            }}
           >
             Download...
           </ContextMenuItem>
