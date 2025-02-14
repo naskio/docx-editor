@@ -5,6 +5,8 @@ import * as docx_preview from 'docx-preview'; // aka docxjs
 import mammoth from 'mammoth';
 import { env } from '@/lib/env'; // aka mammoth.js
 
+// TODO: handle errors
+
 export function buildDocument(content: string): docx.Document {
   const trimmed = content.trim();
   const codeWithoutFirstLine = trimmed.split('\n').slice(1).join('\n');
