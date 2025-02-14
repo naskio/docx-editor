@@ -1,15 +1,15 @@
 import { createStore } from 'zustand/vanilla';
-import { persist, createJSONStorage, devtools } from 'zustand/middleware';
-import { Document } from '@/lib/types';
+import { persist, devtools } from 'zustand/middleware';
+import type { TextFile } from '@/lib/types';
 
 export type DocumentsState = {
-  documents: Document[];
+  documents: TextFile[];
 };
 
 export type DocumentsActions = {
-  createDocument: (name: string, content: string) => void;
+  createDocument: (name: string, text: string) => void;
   deleteDocument: (name: string) => void;
-  saveDocument: (name: string, content: string) => void;
+  saveDocument: (name: string, text: string) => void;
   renameDocument: (oldName: string, newName: string) => void;
   openDocument: (name: string) => void;
   closeDocument: (name: string) => void;
@@ -35,13 +35,14 @@ export const createDocumentsStore = (
       persist(
         (set) => ({
           ...initState,
-          createDocument: (name, content) =>
+          createDocument: (name, text) =>
             set((state) => {
               const doc = state.documents.find((doc) => doc.name === name);
               if (!doc) {
                 state.documents.push({
                   name,
-                  content,
+                  type: 'text/javascript',
+                  text,
                   mtime: new Date(),
                   ctime: new Date(),
                   atime: new Date(),
@@ -53,11 +54,11 @@ export const createDocumentsStore = (
             set((state) => ({
               documents: state.documents.filter((doc) => doc.name !== name),
             })),
-          saveDocument: (name, content) =>
+          saveDocument: (name, text) =>
             set((state) => {
               const doc = state.documents.find((doc) => doc.name === name);
               if (doc) {
-                doc.content = content;
+                doc.text = text;
                 doc.mtime = new Date();
               }
               return { documents: [...state.documents] };
@@ -85,7 +86,7 @@ export const createDocumentsStore = (
         }),
         {
           name: 'documents-storage', // name of the item in the storage (must be unique)
-          storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+          // (optional) by default, 'localStorage' is used as storage
         }
       )
     )

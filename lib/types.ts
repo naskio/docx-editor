@@ -1,22 +1,20 @@
-export type Document = {
+type BaseFile = {
   name: string;
-  content: string;
+  type: string;
   mtime: Date; // when content was last changed
   ctime: Date; // when metadata was last changed
   atime: Date; // when file was last accessed
 };
 
-export type Template = {
-  name: string;
-  content: string;
+export type TextFile = BaseFile & {
+  text: string;
+};
+
+export type BinaryFile = BaseFile & {
+  blob: Blob;
 };
 
 export type Mode = 'create' | 'update' | 'delete';
-
-export type Preview = {
-  name?: string;
-  docx?: Blob;
-};
 
 export type RenderingLibrary =
   | 'docxjs'

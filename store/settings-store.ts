@@ -1,6 +1,6 @@
 import { createStore } from 'zustand/vanilla';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import { Settings } from '@/lib/types';
+import { devtools, persist } from 'zustand/middleware';
+import type { Settings } from '@/lib/types';
 
 export type SettingsState = Settings;
 
@@ -33,7 +33,7 @@ export const createSettingsStore = (
         }),
         {
           name: 'settings-storage', // name of the item in the storage (must be unique)
-          storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+          // (optional) by default, 'localStorage' is used as storage
         }
       )
     )

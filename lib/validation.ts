@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { templates } from '@/lib/constants';
-import { Document, Mode } from '@/lib/types';
+import type { TextFile, Mode } from '@/lib/types';
 
 export function isNewDocumentName(
   name: string,
-  documents: Document[],
+  documents: TextFile[],
   skipName?: string
 ) {
   return documents
@@ -14,7 +13,8 @@ export function isNewDocumentName(
 
 export function getDocumentFormSchema(
   mode: Mode,
-  isNewName: (value: string) => boolean
+  isNewDocumentName: (value: string) => boolean,
+  isValidTemplateName: (value: string) => boolean
 ) {
   const shape = {};
   if (mode !== 'delete') {
@@ -37,15 +37,12 @@ export function getDocumentFormSchema(
         }
         return trimmed;
       })
-      .refine(isNewName, `Document with this name already exists`);
+      .refine(isNewDocumentName, `Document with this name already exists`);
   }
   if (mode === 'create') {
     shape['template'] = z
       .string()
-      .refine(
-        (value) => templates.some((template) => template.name === value),
-        `You must select a template`
-      );
+      .refine(isValidTemplateName, `You must select a template`);
   }
   return z.object(
     shape as {
@@ -57,12 +54,13 @@ export function getDocumentFormSchema(
 
 export function getDocumentFormDefaultValues(
   mode: Mode,
+  defaultTemplateName?: string,
   selectedName?: string
 ) {
   if (mode === 'create')
     return {
       name: 'Untitled Document',
-      template: templates[0].name,
+      template: defaultTemplateName || ``,
     };
   if (mode === 'update') return { name: selectedName };
   return {};

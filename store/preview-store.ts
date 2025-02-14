@@ -1,20 +1,21 @@
 import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
-import { Preview } from '@/lib/types';
+import type { BinaryFile } from '@/lib/types';
 
-export type PreviewState = Preview;
+export type PreviewState = {
+  out?: BinaryFile;
+};
 
 export type PreviewActions = {
   resetPreview: () => void;
-  setPreview: (preview: Preview) => void;
+  setPreview: (out: BinaryFile) => void;
 };
 
 export type PreviewStore = PreviewState & PreviewActions;
 
 export const initPreviewStore = (): PreviewState => {
   return {
-    name: undefined,
-    docx: undefined,
+    out: undefined,
   };
 };
 
@@ -29,7 +30,7 @@ export const createPreviewStore = (
     devtools((set) => ({
       ...initState,
       resetPreview: () => set(initPreviewStore()),
-      setPreview: (preview: Preview) => set(preview),
+      setPreview: (out: BinaryFile) => set({ out }),
     }))
   );
 };

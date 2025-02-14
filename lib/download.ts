@@ -1,11 +1,13 @@
-export function download(name: string, blob: Blob) {
+'use client';
+
+export function download(fileName: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.style.display = 'none';
-  a.download = name;
-  document.body.appendChild(a); // Required for this to work in Firefox
-  a.click();
-  document.body.removeChild(a); // Clean up
+  const anchorEl = document.createElement('a');
+  anchorEl.href = url;
+  anchorEl.style.display = 'none';
+  anchorEl.download = fileName;
+  document.body.appendChild(anchorEl); // Required for this to work in Firefox
+  anchorEl.click();
+  document.body.removeChild(anchorEl); // Clean up
   URL.revokeObjectURL(url);
 }
