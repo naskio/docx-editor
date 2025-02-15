@@ -53,9 +53,11 @@ export function Preview() {
   );
 
   useEffect(() => {
+    let isMounted = true;
     if (out) {
       setIsRendering(true);
       renderer[renderingLibrary](out.blob).then((iframe) => {
+        if (!isMounted) return;
         if (iframe.src) {
           setIframeSrc(iframe.src);
           setIframeSrcDoc(undefined);
@@ -70,6 +72,9 @@ export function Preview() {
         setIsRendering(false);
       });
     }
+    return () => {
+      isMounted = false;
+    };
   }, [out, renderingLibrary, resetPreview]);
 
   return (
