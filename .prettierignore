@@ -28,3 +28,6 @@ next-env.d.ts
 
 # env files
 .env*
+
+# Patch Files
+*.patch

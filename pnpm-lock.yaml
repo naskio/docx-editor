@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@monaco-editor/react':
+    hash: 6d1366b8f4311e623a61d44f02998e52ec143880575069ab68033eb77c18500b
+    path: patches/@monaco-editor__react.patch
+
 importers:
 
   .:
@@ -13,7 +18,7 @@ importers:
         version: 4.0.0(react-hook-form@7.54.2(react@19.0.0))
       '@monaco-editor/react':
         specifier: 4.7.0-rc.0
-        version: 4.7.0-rc.0(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.7.0-rc.0(patch_hash=6d1366b8f4311e623a61d44f02998e52ec143880575069ab68033eb77c18500b)(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@radix-ui/react-context-menu':
         specifier: ^2.2.6
         version: 2.2.6(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -4750,7 +4755,7 @@ snapshots:
     dependencies:
       state-local: 1.0.7
 
-  '@monaco-editor/react@4.7.0-rc.0(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@monaco-editor/react@4.7.0-rc.0(patch_hash=6d1366b8f4311e623a61d44f02998e52ec143880575069ab68033eb77c18500b)(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@monaco-editor/loader': 1.5.0
       monaco-editor: 0.52.2

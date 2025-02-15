@@ -1,0 +1,25 @@
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index cb4dde7ee7ebc13c366548610d88e24ea672fd03..71b7c888dafcc8fbecdb53f598535a1dbc5e8143 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -1,11 +1,13 @@
+ export { default as loader } from '@monaco-editor/loader';
+ import * as react from 'react';
+-import { ReactNode } from 'react';
++import { ReactNode, JSX } from 'react';
+ import * as monaco_editor from 'monaco-editor';
+ import { editor } from 'monaco-editor';
+ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+ 
+ type MonacoDiffEditor = editor.IStandaloneDiffEditor;
++type IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
++type IMarker = editor.IMarker;
+ type DiffOnMount = (editor: MonacoDiffEditor, monaco: Monaco) => void;
+ type DiffBeforeMount = (monaco: Monaco) => void;
+ type DiffEditorProps = {
+@@ -229,4 +231,4 @@ declare const _default: react.MemoExoticComponent<typeof Editor>;
+ type Monaco = typeof monaco;
+ type Theme = 'vs-dark' | 'light';
+ 
+-export { BeforeMount, DiffBeforeMount, _default$1 as DiffEditor, DiffEditorProps, DiffOnMount, _default as Editor, EditorProps, Monaco, MonacoDiffEditor, OnChange, OnMount, OnValidate, Theme, _default as default, useMonaco };
++export { BeforeMount, DiffBeforeMount, _default$1 as DiffEditor, DiffEditorProps, DiffOnMount, _default as Editor, EditorProps, Monaco, IStandaloneCodeEditor, IMarker, MonacoDiffEditor, OnChange, OnMount, OnValidate, Theme, _default as default, useMonaco };
