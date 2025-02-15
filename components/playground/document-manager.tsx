@@ -21,6 +21,7 @@ export function DocumentManager({ templates }: { templates: TextFile[] }) {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
+              autoFocus
               className='text-sidebar-foreground w-full py-3'
               variant='ghost'
               size='lg'
