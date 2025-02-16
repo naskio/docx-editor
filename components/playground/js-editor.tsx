@@ -31,12 +31,13 @@ function getFunctionRange(code: string): [number, number, number, number] {
   for (let i = lines.length; i >= 1; i--) {
     const line = lines[i - 1];
     if (line.startsWith('}')) {
-      result[2] = i;
-      result[3] = 1;
+      const previousLine = lines[i - 2];
+      result[2] = i - 1;
+      result[3] = previousLine.length + 1;
       break;
     }
   }
-  console.log(`getFunctionRange => result`, result, code);
+  console.debug(`getFunctionRange => result`, result, code);
   return result as [number, number, number, number];
 }
 
