@@ -70,6 +70,7 @@ export function DocumentFormDialogContent({
 }) {
   const {
     documents,
+    openTabs,
     createDocument,
     renameDocument,
     deleteDocument,
@@ -111,7 +112,10 @@ export function DocumentFormDialogContent({
     } else if (mode === 'update') {
       const oldName = selectedName as string;
       const newName = name as string;
+      const isOpen = openTabs.includes(oldName);
+      if (isOpen) closeDocument(oldName);
       renameDocument(oldName, newName);
+      if (isOpen) openDocument(newName);
     } else if (mode === 'delete') {
       const oldName = selectedName as string;
       closeDocument(oldName);

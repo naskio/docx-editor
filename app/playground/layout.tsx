@@ -1,6 +1,6 @@
 import React from 'react';
 import { DocumentsStoreProvider } from '@/store/documents-store-provider';
-import { PreviewStoreProvider } from '@/store/preview-store-provider';
+import { OutputStoreProvider } from '@/store/output-store-provider';
 import { SettingsStoreProvider } from '@/store/settings-store-provider';
 
 export default function PlaygroundLayout({
@@ -11,9 +11,9 @@ export default function PlaygroundLayout({
   return (
     <section className='h-screen'>
       <SettingsStoreProvider>
-        <PreviewStoreProvider>
+        <OutputStoreProvider>
           <DocumentsStoreProvider>{children}</DocumentsStoreProvider>
-        </PreviewStoreProvider>
+        </OutputStoreProvider>
       </SettingsStoreProvider>
     </section>
   );

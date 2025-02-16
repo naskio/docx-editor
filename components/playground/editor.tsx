@@ -1,34 +1,89 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { XIcon, Loader2Icon } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePreviewStore } from '@/store/preview-store-provider';
+import { useOutputStore } from '@/store/output-store-provider';
 import { useDocumentsStore } from '@/store/documents-store-provider';
-import { buildDocument, documentToBlob } from '@/lib/docx';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { JSEditor } from '@/components/playground/js-editor';
+import type { TextFile } from '@/lib/types';
 
-export function Editor() {
-  const { setPreview } = usePreviewStore((state) => state);
+// TODO: display + handle errors
+export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
+  const { setOutput } = useOutputStore((state) => state);
   const { openTabs, activeTab, setActiveTab, documents, closeDocument } =
     useDocumentsStore((state) => state);
   const [isCompiling, setIsCompiling] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (documents.length) {
-      const selected = documents.find((doc) => doc.name === activeTab);
-      if (selected) {
-        setIsCompiling(true);
-        const doc = buildDocument(selected.text);
-        documentToBlob(doc).then((blob) => {
-          setPreview(selected.name, blob);
-          setIsCompiling(false);
-        });
+  const workerRef = useRef<Worker | null>(
+    (() => {
+      if (typeof window !== 'undefined') {
+        return new Worker(new URL('@/workers/build-docx.ts', import.meta.url));
+      } else {
+        return null; // for SSR
       }
+    })()
+  );
+
+  // terminate worker
+  useEffect(() => {
+    const worker = workerRef.current;
+    return () => {
+      worker?.terminate();
+    };
+  }, []);
+
+  // worker event listeners
+  const onmessage = useCallback(
+    (
+      event: MessageEvent<{
+        status: 'success' | 'error';
+        name: string;
+        payload: Blob;
+      }>
+    ) => {
+      if (event.data.name !== activeTab) {
+        console.log('worker.onmessage(name!==activeTab)', event.data);
+        return;
+      }
+      if (event.data.status === 'success') {
+        setOutput(event.data.name, event.data.payload);
+      } else {
+        console.log('worker.onmessage(type===error)', event.data);
+      }
+      setIsCompiling(false);
+    },
+    [activeTab, setOutput]
+  );
+  const onerror = useCallback((error: ErrorEvent) => {
+    console.log('worker.onerror', error);
+    setIsCompiling(false);
+  }, []);
+
+  const onmessageerror = useCallback((error: MessageEvent) => {
+    console.log('worker.onmessageerror', error);
+    setIsCompiling(false);
+  }, []);
+
+  if (workerRef.current) {
+    workerRef.current.onmessage = onmessage;
+    workerRef.current.onerror = onerror;
+    workerRef.current.onmessageerror = onmessageerror;
+  }
+
+  // re-build on active tab change or any document change
+  useEffect(() => {
+    const activeFile = documents.find((doc) => doc.name === activeTab);
+    if (activeFile && workerRef.current) {
+      setIsCompiling(true);
+      workerRef.current.postMessage({
+        name: activeFile.name,
+        text: activeFile.text,
+      });
     }
-  }, [documents, setPreview, activeTab]);
+  }, [documents, activeTab]);
 
   return (
     <>
@@ -73,8 +128,17 @@ export function Editor() {
               const doc = documents.find((d) => d.name === docName);
               if (!doc) return;
               return (
-                <TabsContent value={doc.name} key={doc.name} className='mt-0'>
-                  <div>{doc.text}</div>
+                <TabsContent
+                  value={doc.name}
+                  key={doc.name}
+                  className='mt-0'
+                  tabIndex={-1} // to prevent focus on Tab trigger (fix for accessibility size issue)
+                >
+                  <JSEditor
+                    name={doc.name}
+                    defaultValue={doc.text}
+                    declarationFiles={declarationFiles}
+                  />
                 </TabsContent>
               );
             })

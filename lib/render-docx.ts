@@ -1,25 +1,9 @@
-'use client';
-
-import * as docx from 'docx';
 import * as docx_preview from 'docx-preview'; // aka docxjs
-import mammoth from 'mammoth';
-import { env } from '@/lib/env'; // aka mammoth.js
+import mammoth from 'mammoth'; // aka mammoth.js
+import { env } from '@/lib/env';
+import type { Settings } from '@/lib/types';
 
-// TODO: handle errors
-
-export function buildDocument(content: string): docx.Document {
-  const trimmed = content.trim();
-  const codeWithoutFirstLine = trimmed.split('\n').slice(1).join('\n');
-  const codeSandboxed = `"use strict";\n${codeWithoutFirstLine}`;
-  const userFunction = new Function('docx', codeSandboxed);
-  return userFunction(docx) as docx.Document;
-}
-
-export async function documentToBlob(doc: docx.Document) {
-  return docx.Packer.toBlob(doc);
-}
-
-export async function renderWithDocxJS(blob: Blob) {
+async function renderWithDocxJS(blob: Blob) {
   const bodyEl = document.createElement('body');
   const headEl = document.createElement('head');
   // render using DocxJS
@@ -41,7 +25,7 @@ export async function renderWithDocxJS(blob: Blob) {
   return iframeEl;
 }
 
-export async function renderWithMammothJS(blob: Blob) {
+async function renderWithMammothJS(blob: Blob) {
   const result = await mammoth.convertToHtml({
     arrayBuffer: await blob.arrayBuffer(),
   });
@@ -65,7 +49,7 @@ export async function renderWithMammothJS(blob: Blob) {
   return iframeEl;
 }
 
-export async function renderWithGoogleDocs(blob: Blob) {
+async function renderWithGoogleDocs(blob: Blob) {
   // TODO: upload blob first to the server then generate URL
   const url = new URL(`https://docs.google.com/gview`); // ?embedded=true&url=
   url.searchParams.append('embedded', 'true');
@@ -79,7 +63,7 @@ export async function renderWithGoogleDocs(blob: Blob) {
   return iframeEl;
 }
 
-export async function renderWithMicrosoftOffice(blob: Blob) {
+async function renderWithMicrosoftOffice(blob: Blob) {
   // TODO: upload blob first to the server then generate URL
   const url = new URL(`https://view.officeapps.live.com/op/embed.aspx`); // ?src=
   console.debug(`using sample url instead of blob`, blob.type);
@@ -90,4 +74,27 @@ export async function renderWithMicrosoftOffice(blob: Blob) {
   const iframeEl = document.createElement('iframe');
   iframeEl.src = url.toString();
   return iframeEl;
+}
+
+export async function renderDocx(
+  name: string,
+  blob: Blob,
+  library: Settings['renderingLibrary']
+) {
+  const renderer: Record<
+    Settings['renderingLibrary'],
+    (blob: Blob) => Promise<HTMLIFrameElement>
+  > = {
+    docxjs: renderWithDocxJS,
+    'mammoth.js': renderWithMammothJS,
+    'Google Docs': renderWithGoogleDocs,
+    Office: renderWithMicrosoftOffice,
+  };
+  return renderer[library](blob)
+    .then((iframeEl) => {
+      return { status: 'success', name, payload: iframeEl };
+    })
+    .catch((error) => {
+      return { status: 'error', name, payload: error };
+    });
 }

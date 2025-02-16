@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "clean": "rm -rf .next out",
     "start": "next start",
     "lint:check": "next lint",
     "lint:fix": "next lint --fix",
@@ -35,6 +36,7 @@
     "constrained-editor-plugin": "^1.4.0",
     "docx": "^9.1.1",
     "docx-preview": "^0.3.4",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.475.0",
     "mammoth": "^1.9.0",
     "mime-types": "^2.1.35",
@@ -59,6 +61,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@types/jest": "^29.5.14",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/mime-types": "^2.1.4",
     "@types/node": "22.13.1",
     "@types/react": "19.0.8",

@@ -8,7 +8,13 @@ import { DocumentManager } from '@/components/playground/document-manager';
 import { Editor } from '@/components/playground/editor';
 import { Preview } from '@/components/playground/preview';
 
-export function DevEnv({ templates }: { templates: TextFile[] }) {
+export function DevEnv({
+  templates,
+  declarationFiles,
+}: {
+  templates: TextFile[];
+  declarationFiles: TextFile[];
+}) {
   return (
     <ResizablePanelGroup direction='horizontal' autoSaveId='layout'>
       <ResizablePanel
@@ -28,7 +34,7 @@ export function DevEnv({ templates }: { templates: TextFile[] }) {
         id='editor'
         order={2}
       >
-        <Editor />
+        <Editor declarationFiles={declarationFiles} />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel

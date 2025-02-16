@@ -2,10 +2,19 @@ import { Metadata } from 'next';
 import { Header } from '@/components/playground/header';
 import { Separator } from '@/components/ui/separator';
 import { DevEnv } from '@/components/playground/dev-env';
-import { loadTemplates } from '@/lib/templates';
+import { loadTextFiles } from '@/lib/file-system';
 
 export default function PlaygroundPage() {
-  const templates = loadTemplates();
+  const templates = loadTextFiles(`*.js`, `public/templates`, true);
+  const declarationFiles = loadTextFiles(
+    `**/index.d.ts`,
+    `node_modules/docx`,
+    false
+  ).map((file) => {
+    file.name = `node_modules/@types/docx/index.d.ts`;
+    return file;
+  });
+
   return (
     <>
       <div className='flex h-full w-full flex-col'>
@@ -14,7 +23,7 @@ export default function PlaygroundPage() {
         </div>
         <Separator />
         <div className='grow overflow-hidden'>
-          <DevEnv templates={templates} />
+          <DevEnv templates={templates} declarationFiles={declarationFiles} />
         </div>
       </div>
     </>

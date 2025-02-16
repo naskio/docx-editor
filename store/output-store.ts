@@ -2,35 +2,35 @@ import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
 import type { BinaryFile } from '@/lib/types';
 
-export type PreviewState = {
+export type OutputState = {
   out?: BinaryFile;
 };
 
-export type PreviewActions = {
-  resetPreview: () => void;
-  setPreview: (name: string, blob: Blob) => void;
+export type OutputActions = {
+  resetOutput: () => void;
+  setOutput: (name: string, blob: Blob) => void;
 };
 
-export type PreviewStore = PreviewState & PreviewActions;
+export type OutputStore = OutputState & OutputActions;
 
-export const initPreviewStore = (): PreviewState => {
+export const initOutputStore = (): OutputState => {
   return {
     out: undefined,
   };
 };
 
-export const defaultInitPreviewState: PreviewState = {
-  ...initPreviewStore(),
+export const defaultInitOutputState: OutputState = {
+  ...initOutputStore(),
 };
 
-export const createPreviewStore = (
-  initState: PreviewState = defaultInitPreviewState
+export const createOutputStore = (
+  initState: OutputState = defaultInitOutputState
 ) => {
-  return createStore<PreviewStore>()(
+  return createStore<OutputStore>()(
     devtools((set) => ({
       ...initState,
-      resetPreview: () => set(initPreviewStore()),
-      setPreview: (name: string, blob: Blob) =>
+      resetOutput: () => set(initOutputStore()),
+      setOutput: (name: string, blob: Blob) =>
         set({
           out: {
             name,

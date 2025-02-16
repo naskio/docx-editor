@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { usePreviewStore } from '@/store/preview-store-provider';
+import { useOutputStore } from '@/store/output-store-provider';
 import { useSettingsStore } from '@/store/settings-store-provider';
 import {
   Select,
@@ -22,60 +22,52 @@ import { SaveIcon } from 'lucide-react';
 import { download } from '@/lib/download';
 import { Skeleton } from '@/components/ui/skeleton';
 import { env } from '@/lib/env';
-import {
-  renderWithDocxJS,
-  renderWithMammothJS,
-  renderWithGoogleDocs,
-  renderWithMicrosoftOffice,
-} from '@/lib/docx';
+import { renderDocx } from '@/lib/render-docx';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { Settings } from '@/lib/types';
-
-const renderer: Record<
-  Settings['renderingLibrary'],
-  (blob: Blob) => Promise<HTMLIFrameElement>
-> = {
-  docxjs: renderWithDocxJS,
-  'mammoth.js': renderWithMammothJS,
-  'Google Docs': renderWithGoogleDocs,
-  Office: renderWithMicrosoftOffice,
-};
 
 export function Preview() {
   const { renderingLibrary, setRenderingLibrary } = useSettingsStore(
     (state) => state
   );
-  const { out, resetPreview } = usePreviewStore((state) => state);
+  const { out } = useOutputStore((state) => state);
   const [isRendering, setIsRendering] = useState<boolean>(false);
   const [iframeSrc, setIframeSrc] = useState<string | undefined>(undefined);
   const [iframeSrcDoc, setIframeSrcDoc] = useState<string | undefined>(
     undefined
   );
 
+  // re-render on out change or renderingLibrary change
   useEffect(() => {
     let isMounted = true;
     if (out) {
       setIsRendering(true);
-      renderer[renderingLibrary](out.blob).then((iframe) => {
-        if (!isMounted) return;
-        if (iframe.src) {
-          setIframeSrc(iframe.src);
-          setIframeSrcDoc(undefined);
-        } else if (iframe.srcdoc) {
-          setIframeSrc(undefined);
-          setIframeSrcDoc(iframe.srcdoc);
-        } else {
-          setIframeSrc(undefined);
-          setIframeSrcDoc(undefined);
-          resetPreview();
+      renderDocx(out.name, out.blob, renderingLibrary).then(
+        ({ status, payload }) => {
+          console.log(`re-rendering ${out.name} with ${renderingLibrary}`);
+          if (!isMounted) return;
+          if (status === 'success') {
+            const iframeEl = payload as HTMLIFrameElement;
+            if (iframeEl.src) {
+              setIframeSrc(iframeEl.src);
+              setIframeSrcDoc(undefined);
+            } else if (iframeEl.srcdoc) {
+              setIframeSrc(undefined);
+              setIframeSrcDoc(iframeEl.srcdoc);
+            } else {
+              setIframeSrc(undefined);
+              setIframeSrcDoc(undefined);
+            }
+          } else {
+            console.log('renderDocx', payload);
+          }
+          setIsRendering(false);
         }
-        setIsRendering(false);
-      });
+      );
     }
     return () => {
       isMounted = false;
     };
-  }, [out, renderingLibrary, resetPreview]);
+  }, [out, renderingLibrary]);
 
   return (
     <div className='flex h-full flex-col'>

@@ -18,7 +18,6 @@ describe('loadTextFile', () => {
 describe('loadTextFiles', () => {
   it('should load all TypeScript files in the lib directory', () => {
     const textFiles = loadTextFiles('*.ts', 'lib', true);
-    console.log(textFiles);
     expect(textFiles.length).toBeGreaterThan(2);
     expect(textFiles.map((f) => f.name)).toContain('file-system');
   });

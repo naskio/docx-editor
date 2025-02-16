@@ -1,6 +1,14 @@
-import * as docx from 'docx';
+import * as docx from 'docx'
 
-const doc = new docx.Document({
-  sections: [],
-});
-return doc;
+/**
+ * @returns {docx.Document}
+ */
+function generateDocument() {
+  // Your code goes here
+  const doc = new docx.Document({
+    sections: [],
+  });
+  return doc;
+}
+
+export default generateDocument;

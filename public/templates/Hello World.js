@@ -1,17 +1,25 @@
 import * as docx from 'docx';
 
-const doc = new docx.Document({
-  sections: [
-    {
-      properties: {},
-      children: [
-        new docx.Paragraph({
-          children: [
-            new docx.TextRun('Hello World'),
-          ],
-        }),
-      ],
-    },
-  ],
-});
-return doc;
+/**
+ * @returns {docx.Document}
+ */
+function generateDocument() {
+  // Your code goes here
+  const doc = new docx.Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun('Hello World'),
+            ],
+          }),
+        ],
+      },
+    ],
+  });
+  return doc;
+}
+
+export default generateDocument;
