@@ -94,7 +94,7 @@ export const createDocumentsStore = (
               state.activeTab = name;
               return {
                 documents: [...state.documents],
-                editorTabs: [...state.openTabs],
+                openTabs: [...state.openTabs],
                 activeTab: state.activeTab,
               };
             }),
@@ -120,7 +120,7 @@ export const createDocumentsStore = (
                 }
               }
               return {
-                editorTabs: [...state.openTabs],
+                openTabs: [...state.openTabs],
                 activeTab: state.activeTab,
               };
             }),
