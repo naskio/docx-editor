@@ -22,8 +22,8 @@ function getFunctionRange(code: string): [number, number, number, number] {
   for (let i = 1; i <= lines.length; i++) {
     const line = lines[i - 1];
     if (line.startsWith('function')) {
-      result[0] = i;
-      result[1] = line.length + 1;
+      result[0] = i + 1;
+      result[1] = 1;
       break;
     }
   }
