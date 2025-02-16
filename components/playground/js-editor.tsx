@@ -36,6 +36,7 @@ function getFunctionRange(code: string): [number, number, number, number] {
       break;
     }
   }
+  console.log(`getFunctionRange => result`, result, code);
   return result as [number, number, number, number];
 }
 
