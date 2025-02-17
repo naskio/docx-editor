@@ -2,6 +2,7 @@ import React from 'react';
 import { DocumentsStoreProvider } from '@/store/documents-store-provider';
 import { OutputStoreProvider } from '@/store/output-store-provider';
 import { SettingsStoreProvider } from '@/store/settings-store-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function PlaygroundLayout({
   children,
@@ -9,12 +10,12 @@ export default function PlaygroundLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className='h-screen'>
-      <SettingsStoreProvider>
-        <OutputStoreProvider>
-          <DocumentsStoreProvider>{children}</DocumentsStoreProvider>
-        </OutputStoreProvider>
-      </SettingsStoreProvider>
-    </section>
+    <SettingsStoreProvider>
+      <OutputStoreProvider>
+        <DocumentsStoreProvider>
+          <SidebarProvider>{children}</SidebarProvider>
+        </DocumentsStoreProvider>
+      </OutputStoreProvider>
+    </SettingsStoreProvider>
   );
 }

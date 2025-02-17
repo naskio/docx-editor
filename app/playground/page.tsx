@@ -16,17 +16,13 @@ export default function PlaygroundPage() {
   });
 
   return (
-    <>
-      <div className='flex h-full w-full flex-col'>
-        <div className='h-16 sm:h-24'>
-          <Header />
-        </div>
-        <Separator />
-        <div className='grow overflow-hidden'>
-          <DevEnv templates={templates} declarationFiles={declarationFiles} />
-        </div>
+    <section className='flex h-screen w-full flex-col'>
+      <Header />
+      <Separator />
+      <div className='grow overflow-hidden'>
+        <DevEnv templates={templates} declarationFiles={declarationFiles} />
       </div>
-    </>
+    </section>
   );
 }
 
