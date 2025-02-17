@@ -1,19 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { FileIcon } from 'lucide-react';
+import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuShortcut,
   ContextMenuSeparator,
+  ContextMenuShortcut,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { useDocumentsStore } from '@/store/documents-store-provider';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
+import { useDocumentsStore } from '@/store/documents-store-provider';
 import { download } from '@/lib/download';
-import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
+import { cn } from '@/lib/utils';
 
 export const isMac: boolean =
   typeof window !== 'undefined'

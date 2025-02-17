@@ -1,6 +1,6 @@
-import path from 'node:path';
-import fs from 'node:fs';
 import mime from 'mime-types';
+import fs from 'node:fs';
+import path from 'node:path';
 import type { TextFile } from '@/lib/types';
 
 export function loadTextFile(filePath: string): TextFile {

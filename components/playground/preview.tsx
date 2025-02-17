@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Separator } from '@/components/ui/separator';
-import { useOutputStore } from '@/store/output-store-provider';
-import { useSettingsStore } from '@/store/settings-store-provider';
+import { SaveIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -11,19 +11,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import { SaveIcon } from 'lucide-react';
+import { useOutputStore } from '@/store/output-store-provider';
+import { useSettingsStore } from '@/store/settings-store-provider';
 import { download } from '@/lib/download';
-import { Skeleton } from '@/components/ui/skeleton';
 import { env } from '@/lib/env';
 import { renderDocx } from '@/lib/render-docx';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export function Preview() {
   const { renderingLibrary, setRenderingLibrary } = useSettingsStore(

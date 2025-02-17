@@ -1,19 +1,19 @@
 'use client';
 
-import Editor, {
-  Monaco,
-  IStandaloneCodeEditor,
-  IMarker,
-} from '@monaco-editor/react';
-import {
-  constrainedEditor,
-  RangeRestrictionObject,
-} from 'constrained-editor-plugin';
-import debounce from 'lodash.debounce';
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import { TextFile } from '@/lib/types';
+import Editor, {
+  IMarker,
+  IStandaloneCodeEditor,
+  Monaco,
+} from '@monaco-editor/react';
+import {
+  RangeRestrictionObject,
+  constrainedEditor,
+} from 'constrained-editor-plugin';
+import debounce from 'lodash.debounce';
 import { useDocumentsStore } from '@/store/documents-store-provider';
+import type { TextFile } from '@/lib/types';
 
 function getOpeningRange(code: string): [number, number, number, number] {
   /** range of `function generateDocument() {` */

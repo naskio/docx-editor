@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { GithubIcon, StarIcon, PlayIcon } from 'lucide-react';
+import { GithubIcon, PlayIcon, StarIcon } from 'lucide-react';
 import { Logo } from '@/components/logo';
-import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { env } from '@/lib/env';
+import { cn } from '@/lib/utils';
 
 export default function HeroPage() {
   return (

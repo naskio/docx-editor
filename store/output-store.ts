@@ -1,5 +1,5 @@
-import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 import type { BinaryFile } from '@/lib/types';
 
 export type OutputState = {

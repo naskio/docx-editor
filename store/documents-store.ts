@@ -1,5 +1,5 @@
-import { createStore } from 'zustand/vanilla';
 import { persist, devtools } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 import type { TextFile } from '@/lib/types';
 
 const MAX_OPEN_TABS = 3;

@@ -1,3 +1,14 @@
+import React, { useEffect, useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import {
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -6,12 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -20,18 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import React, { useEffect, useMemo } from 'react';
 import { useDocumentsStore } from '@/store/documents-store-provider';
+import type { Mode, TextFile } from '@/lib/types';
 import {
-  getDocumentFormSchema,
   getDocumentFormDefaultValues,
+  getDocumentFormSchema,
   isNewDocumentName,
 } from '@/lib/validation';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { Mode, TextFile } from '@/lib/types';
 
 const labels = {
   create: {

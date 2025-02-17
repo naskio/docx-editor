@@ -1,9 +1,10 @@
 import React from 'react';
 import type { Metadata } from 'next';
-// styling
+// fonts
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css'; // These styles apply to every route in the application
 import { ThemeProvider } from '@/components/theme-provider';
+// These styles apply to every route in the application
+import './globals.css';
 
 // Define the font classes
 const geistSans = Geist({

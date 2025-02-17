@@ -1,12 +1,12 @@
+import { DocumentSidebar } from '@/components/playground/document-sidebar';
+import { Editor } from '@/components/playground/editor';
+import { Preview } from '@/components/playground/preview';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import type { TextFile } from '@/lib/types';
-import { DocumentSidebar } from '@/components/playground/document-sidebar';
-import { Editor } from '@/components/playground/editor';
-import { Preview } from '@/components/playground/preview';
 
 export function DevEnv({
   templates,

@@ -1,22 +1,22 @@
 'use client';
 
+import React, { useState } from 'react';
+import { FilePlusIcon } from 'lucide-react';
+import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
+import { DocumentMenuItem } from '@/components/playground/document-menu-item';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
 } from '@/components/ui/sidebar';
-import { FilePlusIcon } from 'lucide-react';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
-import React, { useState } from 'react';
-import type { TextFile } from '@/lib/types';
 import { useDocumentsStore } from '@/store/documents-store-provider';
-import { DocumentMenuItem } from '@/components/playground/document-menu-item';
+import type { TextFile } from '@/lib/types';
 
 const MemoizedDocumentMenuItem = React.memo(DocumentMenuItem);
 

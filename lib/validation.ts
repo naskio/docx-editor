@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { TextFile, Mode } from '@/lib/types';
+import type { Mode, TextFile } from '@/lib/types';
 
 export function isNewDocumentName(
   name: string,

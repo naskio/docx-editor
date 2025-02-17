@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { XIcon, Loader2Icon } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useOutputStore } from '@/store/output-store-provider';
-import { useDocumentsStore } from '@/store/documents-store-provider';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Loader2Icon, XIcon } from 'lucide-react';
 import { JSEditor } from '@/components/playground/js-editor';
+import { buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDocumentsStore } from '@/store/documents-store-provider';
+import { useOutputStore } from '@/store/output-store-provider';
 import type { TextFile } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   const { setOutput } = useOutputStore((state) => state);

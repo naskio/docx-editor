@@ -1,5 +1,5 @@
-import { createStore } from 'zustand/vanilla';
 import { devtools, persist } from 'zustand/middleware';
+import { createStore } from 'zustand/vanilla';
 import type { Settings } from '@/lib/types';
 
 export type SettingsState = Settings;

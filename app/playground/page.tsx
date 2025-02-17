@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
+import { DevEnv } from '@/components/playground/dev-env';
 import { Header } from '@/components/playground/header';
 import { Separator } from '@/components/ui/separator';
-import { DevEnv } from '@/components/playground/dev-env';
 import { loadTextFiles } from '@/lib/file-system';
 
 export default function PlaygroundPage() {
