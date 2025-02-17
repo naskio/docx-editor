@@ -57,7 +57,7 @@ export function DocumentSidebar({ templates }: { templates: TextFile[] }) {
           <SidebarGroupContent>
             <SidebarMenu>
               {documents.map((doc, index) => (
-                <DocumentMenuItemMemoized key={index} name={doc.name} />
+                <DocumentMenuItemMemoized key={index} document={doc} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

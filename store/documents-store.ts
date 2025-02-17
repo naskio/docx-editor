@@ -44,16 +44,20 @@ export const createDocumentsStore = (
           ...initState,
           createDocument: (name, text) =>
             set((state) => {
-              const doc = state.documents.find((doc) => doc.name === name);
-              if (!doc) {
-                state.documents.push({
+              const docIndex = state.documents.findIndex(
+                (doc) => doc.name === name
+              );
+              if (docIndex === -1) {
+                // if the document does not exist
+                const newDoc = {
                   name,
                   type: 'text/javascript',
                   text,
                   mtime: new Date(),
                   ctime: new Date(),
                   atime: new Date(),
-                });
+                };
+                state.documents.push(newDoc);
               }
               return { documents: [...state.documents] };
             }),
@@ -63,38 +67,58 @@ export const createDocumentsStore = (
             })),
           saveDocument: (name, text) =>
             set((state) => {
-              const doc = state.documents.find((doc) => doc.name === name);
-              if (doc) {
+              const docIndex = state.documents.findIndex(
+                (doc) => doc.name === name
+              );
+              if (docIndex !== -1) {
+                // if the document exists
+                const doc = state.documents[docIndex];
                 doc.text = text;
                 doc.mtime = new Date();
+                state.documents[docIndex] = { ...doc }; // update the document
               }
               return { documents: [...state.documents] };
             }),
           renameDocument: (oldName, newName) =>
             set((state) => {
-              const doc = state.documents.find((doc) => doc.name === oldName);
-              if (doc) {
+              const docIndex = state.documents.findIndex(
+                (doc) => doc.name === oldName
+              );
+              if (docIndex !== -1) {
+                // if the document exists
+                const doc = state.documents[docIndex];
                 doc.name = newName;
                 doc.ctime = new Date();
+                state.documents[docIndex] = { ...doc }; // update the document
               }
               return { documents: [...state.documents] };
             }),
           openDocument: (name) =>
             set((state) => {
-              const doc = state.documents.find((doc) => doc.name === name);
-              if (doc) {
+              const docIndex = state.documents.findIndex(
+                (doc) => doc.name === name
+              );
+              if (docIndex !== -1) {
+                // if the document exists
+                const doc = state.documents[docIndex];
                 doc.atime = new Date();
-              }
-              if (!state.openTabs.includes(name)) {
-                if (state.openTabs.length >= MAX_OPEN_TABS) {
-                  state.openTabs.shift(); // remove the first tab
+                state.documents[docIndex] = { ...doc }; // update the document
+                state.documents = [...state.documents]; // update the documents
+                // if not already open tab
+                if (!state.openTabs.includes(name)) {
+                  // remove the first tab if the max number of tabs is reached
+                  if (state.openTabs.length >= MAX_OPEN_TABS) {
+                    state.openTabs.shift();
+                  }
+                  state.openTabs.push(name); // add the new tab
+                  state.openTabs = [...state.openTabs]; // update the openTabs
                 }
-                state.openTabs.push(name);
+                // activate the tab
+                state.activeTab = name;
               }
-              state.activeTab = name;
               return {
-                documents: [...state.documents],
-                openTabs: [...state.openTabs],
+                documents: state.documents,
+                openTabs: state.openTabs,
                 activeTab: state.activeTab,
               };
             }),
@@ -102,6 +126,7 @@ export const createDocumentsStore = (
             set((state) => {
               const index = state.openTabs.indexOf(name);
               if (index !== -1) {
+                // if the tab is open
                 state.openTabs = state.openTabs.filter((tab) => tab !== name);
                 // check if the active tab is the one being closed
                 if (state.activeTab === name) {
@@ -120,7 +145,7 @@ export const createDocumentsStore = (
                 }
               }
               return {
-                openTabs: [...state.openTabs],
+                openTabs: state.openTabs,
                 activeTab: state.activeTab,
               };
             }),

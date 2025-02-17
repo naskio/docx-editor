@@ -13,6 +13,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { useDocumentsStore } from '@/store/documents-store-provider';
 import { download } from '@/lib/download';
+import type { TextFile } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 export const isMac: boolean =
@@ -20,15 +21,12 @@ export const isMac: boolean =
     ? navigator.userAgent.toUpperCase().indexOf('MAC') >= 0
     : false;
 
-function DocumentMenuItem({ name }: { name: string }) {
+function DocumentMenuItem({ document }: { document: TextFile }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const openDocument = useDocumentsStore((state) => state.openDocument);
-  const document = useDocumentsStore((state) =>
-    state.documents.find((doc) => doc.name === name)
-  );
 
   const closeRenameDialog = useCallback(() => {
     setIsRenameDialogOpen(false);
@@ -51,14 +49,14 @@ function DocumentMenuItem({ name }: { name: string }) {
               isContextMenuOpen && 'bg-accent text-accent-foreground' // because will lose focus/style
             )}
             onDoubleClick={() => {
-              openDocument(name);
+              openDocument(document.name);
             }}
             // onClick => by default, focus the button (select)
             onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
               // keyboard shortcuts
               if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 // ⌘Cmd/⌃Ctrl + Enter => Open in editor
-                openDocument(name);
+                openDocument(document.name);
                 e.preventDefault();
               } else if (e.key === 'Enter') {
                 // Enter => Rename
@@ -76,11 +74,11 @@ function DocumentMenuItem({ name }: { name: string }) {
             }}
           >
             <FileIcon />
-            <span className='truncate'>{name}</span>
+            <span className='truncate'>{document.name}</span>
           </SidebarMenuButton>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem onClick={() => openDocument(name)}>
+          <ContextMenuItem onClick={() => openDocument(document.name)}>
             Open
             <ContextMenuShortcut>{isMac ? '⌘⏎' : '⌃⏎'}</ContextMenuShortcut>
           </ContextMenuItem>
@@ -120,7 +118,7 @@ function DocumentMenuItem({ name }: { name: string }) {
             mode='update'
             shouldReset={!isRenameDialogOpen}
             postSubmit={closeRenameDialog}
-            selectedName={name}
+            selectedName={document.name}
           />
         </DialogContent>
       </Dialog>
@@ -136,7 +134,7 @@ function DocumentMenuItem({ name }: { name: string }) {
             mode='delete'
             shouldReset={!isDeleteDialogOpen}
             postSubmit={closeDeleteDialog}
-            selectedName={name}
+            selectedName={document.name}
           />
         </DialogContent>
       </Dialog>
