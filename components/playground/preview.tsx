@@ -11,7 +11,6 @@ import { useSettingsStore } from '@/store/settings-store-provider';
 import { renderDocx } from '@/lib/render-docx';
 
 export function Preview() {
-  console.log(`rendering Preview`);
   const { renderingLibrary, setRenderingLibrary } = useSettingsStore(
     (state) => state
   );
@@ -26,28 +25,24 @@ export function Preview() {
   // re-render on out change or renderingLibrary change
   useEffect(() => {
     let isMounted = true;
-    if (name && blob) {
+    if (blob) {
       setIsRendering(true);
-      renderDocx(name, blob, renderingLibrary).then(
-        async ({ status, payload }) => {
-          console.debug(`re-rendering ${name} with ${renderingLibrary}`);
-          if (!isMounted) return;
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          if (status === 'success') {
-            const iframeEl = payload as HTMLIFrameElement;
-            setIframeSrc(iframeEl.src || undefined);
-            setIframeSrcDoc(iframeEl.srcdoc || undefined);
-          } else {
-            console.error('renderDocx', payload);
-          }
-          setIsRendering(false);
+      renderDocx(title, blob, renderingLibrary).then(({ status, payload }) => {
+        if (!isMounted) return;
+        if (status === 'success') {
+          const iframeEl = payload as HTMLIFrameElement;
+          setIframeSrc(iframeEl.src || undefined);
+          setIframeSrcDoc(iframeEl.srcdoc || undefined);
+        } else {
+          console.error('renderDocx', payload);
         }
-      );
+        setIsRendering(false);
+      });
     }
     return () => {
       isMounted = false;
     };
-  }, [name, blob, renderingLibrary]);
+  }, [title, blob, renderingLibrary]);
 
   return (
     <div className='flex h-full flex-col'>
@@ -58,8 +53,8 @@ export function Preview() {
         setRenderingLibrary={setRenderingLibrary}
       />
       <Separator />
-      {Boolean(errorMessage) && (
-        <div className='dark:bg-sidebar px-6 py-3'>
+      {!iframeSrc && !iframeSrcDoc && Boolean(errorMessage) && (
+        <div className='px-3 py-3'>
           <Alert
             variant='destructive'
             className='dark:bg-destructive dark:text-white'

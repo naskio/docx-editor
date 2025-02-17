@@ -1,21 +1,24 @@
 import { devtools } from 'zustand/middleware';
 import { createStore } from 'zustand/vanilla';
-import type { BinaryFile } from '@/lib/types';
 
 export type OutputState = {
-  out?: BinaryFile;
+  name?: string; // last successful output file name
+  blob?: Blob; // last successful output file blob
+  errorMessage?: string; // last error message (⚠️ name doesn't necessarily correspond to the errorMessage)
 };
 
 export type OutputActions = {
   resetOutput: () => void;
-  setOutput: (name: string, blob: Blob) => void;
+  setOutput: (partialState: OutputState) => void;
 };
 
 export type OutputStore = OutputState & OutputActions;
 
 export const initOutputStore = (): OutputState => {
   return {
-    out: undefined,
+    name: undefined,
+    blob: undefined,
+    errorMessage: undefined,
   };
 };
 
@@ -30,17 +33,7 @@ export const createOutputStore = (
     devtools((set) => ({
       ...initState,
       resetOutput: () => set(initOutputStore()),
-      setOutput: (name: string, blob: Blob) =>
-        set({
-          out: {
-            name,
-            type: `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
-            blob,
-            mtime: new Date(),
-            ctime: new Date(),
-            atime: new Date(),
-          },
-        }),
+      setOutput: (partialState) => set({ ...partialState }),
     }))
   );
 };
