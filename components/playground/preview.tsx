@@ -1,62 +1,42 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { SaveIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { AlertCircle } from 'lucide-react';
+import { PreviewFrameMemoized } from '@/components/playground/preview-frame';
+import { PreviewHeaderMemoized } from '@/components/playground/preview-header';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { useOutputStore } from '@/store/output-store-provider';
 import { useSettingsStore } from '@/store/settings-store-provider';
-import { download } from '@/lib/download';
-import { env } from '@/lib/env';
 import { renderDocx } from '@/lib/render-docx';
 
 export function Preview() {
+  console.log(`rendering Preview`);
   const { renderingLibrary, setRenderingLibrary } = useSettingsStore(
     (state) => state
   );
-  const { out } = useOutputStore((state) => state);
+  const { name, blob, errorMessage } = useOutputStore((state) => state);
   const [isRendering, setIsRendering] = useState<boolean>(false);
   const [iframeSrc, setIframeSrc] = useState<string | undefined>(undefined);
   const [iframeSrcDoc, setIframeSrcDoc] = useState<string | undefined>(
     undefined
   );
+  const title = name || `Preview`;
 
   // re-render on out change or renderingLibrary change
   useEffect(() => {
     let isMounted = true;
-    if (out) {
+    if (name && blob) {
       setIsRendering(true);
-      renderDocx(out.name, out.blob, renderingLibrary).then(
-        ({ status, payload }) => {
-          console.debug(`re-rendering ${out.name} with ${renderingLibrary}`);
+      renderDocx(name, blob, renderingLibrary).then(
+        async ({ status, payload }) => {
+          console.debug(`re-rendering ${name} with ${renderingLibrary}`);
           if (!isMounted) return;
+          await new Promise((resolve) => setTimeout(resolve, 2000));
           if (status === 'success') {
             const iframeEl = payload as HTMLIFrameElement;
-            if (iframeEl.src) {
-              setIframeSrc(iframeEl.src);
-              setIframeSrcDoc(undefined);
-            } else if (iframeEl.srcdoc) {
-              setIframeSrc(undefined);
-              setIframeSrcDoc(iframeEl.srcdoc);
-            } else {
-              setIframeSrc(undefined);
-              setIframeSrcDoc(undefined);
-            }
+            setIframeSrc(iframeEl.src || undefined);
+            setIframeSrcDoc(iframeEl.srcdoc || undefined);
           } else {
             console.error('renderDocx', payload);
           }
@@ -67,63 +47,36 @@ export function Preview() {
     return () => {
       isMounted = false;
     };
-  }, [out, renderingLibrary]);
+  }, [name, blob, renderingLibrary]);
 
   return (
     <div className='flex h-full flex-col'>
-      <div className='bg-sidebar flex flex-row flex-wrap items-center justify-between gap-y-2 p-2'>
-        <p className='text-muted-foreground text-sm font-medium'>
-          {out?.name || `Preview`}
-        </p>
-        <div className='flex flex-row gap-x-2'>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant='outline'
-                  size='icon'
-                  className='bg-sidebar text-sidebar-foreground'
-                  disabled={!out}
-                  onClick={() => {
-                    if (out) download(`${out.name}.docx`, out.blob);
-                  }}
-                >
-                  <SaveIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Download .docx</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Select value={renderingLibrary} onValueChange={setRenderingLibrary}>
-            <SelectTrigger className='w-[128px]'>
-              <SelectValue placeholder='Select a library' />
-            </SelectTrigger>
-            <SelectContent className='text-sidebar-foreground'>
-              {env.renderingLibraries.map((library, index) => (
-                <SelectItem value={library} key={index}>
-                  {library}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <PreviewHeaderMemoized
+        name={title}
+        blob={blob}
+        renderingLibrary={renderingLibrary}
+        setRenderingLibrary={setRenderingLibrary}
+      />
       <Separator />
-      {isRendering ? (
-        <div className='grow p-3'>
-          <Skeleton className='h-full' />
+      {Boolean(errorMessage) && (
+        <div className='dark:bg-sidebar px-6 py-3'>
+          <Alert
+            variant='destructive'
+            className='dark:bg-destructive dark:text-white'
+          >
+            <AlertCircle className='h-5 w-5 dark:text-white' />
+            <AlertTitle className='text-lg font-bold'>Error:</AlertTitle>
+            <AlertDescription className='text-md font-bold'>
+              {errorMessage?.replace(`Error:`, '')}
+            </AlertDescription>
+          </Alert>
         </div>
-      ) : (
-        <ScrollArea className='grow [&>div>div]:!h-full'>
-          <iframe
-            className='h-full w-full'
-            src={iframeSrc}
-            srcDoc={iframeSrcDoc}
-          ></iframe>
-        </ScrollArea>
       )}
+      <PreviewFrameMemoized
+        isLoading={isRendering && !iframeSrc && !iframeSrcDoc}
+        iframeSrc={iframeSrc}
+        iframeSrcDoc={iframeSrcDoc}
+      />
     </div>
   );
 }
