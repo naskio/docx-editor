@@ -73,6 +73,7 @@ export function JSEditor({
   function handleEditorWillMount(monaco: Monaco) {
     // do something before editor is mounted
     // see: https://monaco-react.surenatoyan.com/
+    // and: https://microsoft.github.io/monaco-editor/
     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: false, // enable semantic validation
@@ -172,7 +173,7 @@ export function JSEditor({
       if (range.includes(-1)) {
         range = [1, 1, 1, 1]; // default to first line
       }
-      monaco.editor.setModelMarkers(model, 'default', [
+      monaco.editor.setModelMarkers(model, name, [
         {
           startLineNumber: range[0],
           startColumn: range[1],
