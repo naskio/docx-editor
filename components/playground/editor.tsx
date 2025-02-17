@@ -49,6 +49,7 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
         return;
       }
       if (event.data.status === 'success') {
+        setErrorMessage(``);
         setOutput(event.data.name, event.data.payload);
       } else {
         console.debug('worker.onmessage(type===error)', event.data);
