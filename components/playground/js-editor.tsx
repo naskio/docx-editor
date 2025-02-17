@@ -168,6 +168,10 @@ export function JSEditor({
         const eRange = getClosingRange(defaultValue);
         range = [sRange[0] + 1, 1, eRange[0], eRange[1]];
       }
+      // check range is valid
+      if (range.includes(-1)) {
+        range = [1, 1, 1, 1]; // default to first line
+      }
       monaco.editor.setModelMarkers(model, 'default', [
         {
           startLineNumber: range[0],
