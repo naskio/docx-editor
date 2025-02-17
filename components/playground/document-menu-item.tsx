@@ -1,5 +1,5 @@
-import { useDocumentsStore } from '@/store/documents-store-provider';
 import React, { useRef, useState } from 'react';
+import { FileIcon } from 'lucide-react';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -8,11 +8,11 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import { useDocumentsStore } from '@/store/documents-store-provider';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { download } from '@/lib/download';
-import { FileIcon } from 'lucide-react';
 import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
 
 export const isMac: boolean =
@@ -20,22 +20,22 @@ export const isMac: boolean =
     ? navigator.userAgent.toUpperCase().indexOf('MAC') >= 0
     : false;
 
-export function DocumentItem({ name }: { name: string }) {
+export function DocumentMenuItem({ name }: { name: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
-  const { openDocument } = useDocumentsStore((state) => state);
+  const openDocument = useDocumentsStore((state) => state.openDocument);
   const document = useDocumentsStore((state) =>
     state.documents.find((doc) => doc.name === name)
   );
 
   return (
-    <>
+    <SidebarMenuItem>
       <ContextMenu onOpenChange={setIsContextMenuOpen}>
         <ContextMenuTrigger>
-          <Button
-            variant='ghost'
+          <SidebarMenuButton
+            variant='default'
             size='default'
             ref={buttonRef}
             className={cn(
@@ -69,7 +69,7 @@ export function DocumentItem({ name }: { name: string }) {
           >
             <FileIcon />
             <span className='truncate'>{name}</span>
-          </Button>
+          </SidebarMenuButton>
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem onClick={() => openDocument(name)}>
@@ -132,6 +132,6 @@ export function DocumentItem({ name }: { name: string }) {
           />
         </DialogContent>
       </Dialog>
-    </>
+    </SidebarMenuItem>
   );
 }

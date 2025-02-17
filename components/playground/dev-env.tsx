@@ -4,7 +4,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import type { TextFile } from '@/lib/types';
-import { DocumentManager } from '@/components/playground/document-manager';
+import { DocumentSidebar } from '@/components/playground/document-sidebar';
 import { Editor } from '@/components/playground/editor';
 import { Preview } from '@/components/playground/preview';
 
@@ -24,7 +24,7 @@ export function DevEnv({
         id='document-manager'
         order={1}
       >
-        <DocumentManager templates={templates} />
+        <DocumentSidebar templates={templates} />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel
