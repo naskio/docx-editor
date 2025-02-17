@@ -8,7 +8,21 @@ const config = {
   semi: true,
   singleQuote: true,
   jsxSingleQuote: true,
-  plugins: ['prettier-plugin-tailwindcss'],
+  importOrder: [
+    '<THIRD_PARTY_MODULES>',
+    '^@/app/(.*)$',
+    '^@/components/(.*)$',
+    '^@/workers/(.*)$',
+    '^@/hooks/(.*)$',
+    '^@/store/(.*)$',
+    '^@/lib/(.*)$',
+    '^@/(.*)$',
+    '^[./]',
+  ],
+  plugins: [
+    'prettier-plugin-tailwindcss',
+    '@trivago/prettier-plugin-sort-imports',
+  ],
 };
 
 export default config;

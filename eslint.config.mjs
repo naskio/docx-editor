@@ -13,6 +13,7 @@ const eslintConfig = [
     extends: ['next/core-web-vitals', 'next/typescript', 'prettier'],
     rules: {
       '@next/next/no-page-custom-font': 'off',
+      'sort-imports': 'off',
     },
   }),
 ];
