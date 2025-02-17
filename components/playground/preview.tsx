@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { PreviewFrameMemoized } from '@/components/playground/preview-frame';
 import { PreviewHeaderMemoized } from '@/components/playground/preview-header';
@@ -20,6 +20,7 @@ export function Preview() {
   const [iframeSrcDoc, setIframeSrcDoc] = useState<string | undefined>(
     undefined
   );
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const title = name || `Preview`;
 
   // re-render on out change or renderingLibrary change
@@ -44,22 +45,15 @@ export function Preview() {
     };
   }, [title, blob, renderingLibrary]);
 
-  const iframeRef = React.useRef<HTMLIFrameElement>(null);
-  const forceReloadIframeHandler = useCallback(() => {
-    const iframeEl = iframeRef.current;
-    if (iframeEl) {
-      iframeEl.src = `${iframeEl.src}`; // force reload iframe
-    }
-  }, []);
-
   return (
     <div className='flex h-full flex-col'>
       <PreviewHeaderMemoized
+        iframeRef={iframeRef}
+        displayReloadButton={Boolean(iframeSrc)}
         name={title}
         blob={blob}
         renderingLibrary={renderingLibrary}
         setRenderingLibrary={setRenderingLibrary}
-        forceReloadIframe={forceReloadIframeHandler}
       />
       <Separator />
       {!iframeSrc && !iframeSrcDoc && Boolean(errorMessage) && (

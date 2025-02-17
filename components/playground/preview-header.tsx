@@ -21,28 +21,34 @@ function PreviewHeader({
   blob,
   renderingLibrary,
   setRenderingLibrary,
-  forceReloadIframe,
+  displayReloadButton,
+  iframeRef,
 }: {
   name: string;
   blob?: Blob;
   renderingLibrary: string;
   setRenderingLibrary: (library: string) => void;
-  forceReloadIframe: () => void;
+  displayReloadButton: boolean;
+  iframeRef?: React.RefObject<HTMLIFrameElement | null>;
 }) {
   return (
     <>
       <div className='bg-sidebar flex flex-row flex-wrap items-center justify-between gap-y-2 p-2'>
         <p className='text-muted-foreground text-sm font-medium'>{name}</p>
         <div className='flex flex-row gap-x-2'>
-          {[`Office`, `Docs`].includes(renderingLibrary) && (
+          {displayReloadButton && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant='outline'
                   size='icon'
                   className='bg-sidebar text-sidebar-foreground'
-                  disabled={!blob}
-                  onClick={forceReloadIframe}
+                  onClick={() => {
+                    const iframeEl = iframeRef?.current;
+                    if (iframeEl?.src) {
+                      iframeEl.src = `${iframeEl.src}`; // force reload iframe
+                    }
+                  }}
                 >
                   <RefreshCwIcon />
                 </Button>
