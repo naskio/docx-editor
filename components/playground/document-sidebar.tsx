@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FilePlusIcon } from 'lucide-react';
-import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
-import { DocumentMenuItem } from '@/components/playground/document-menu-item';
+import { DocumentFormDialogContentMemoized } from '@/components/playground/document-form-dialog-content';
+import { DocumentMenuItemMemoized } from '@/components/playground/document-menu-item';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
@@ -18,11 +18,14 @@ import {
 import { useDocumentsStore } from '@/store/documents-store-provider';
 import type { TextFile } from '@/lib/types';
 
-const MemoizedDocumentMenuItem = React.memo(DocumentMenuItem);
-
 export function DocumentSidebar({ templates }: { templates: TextFile[] }) {
   const documents = useDocumentsStore((state) => state.documents);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
+  const closeDialog = useCallback(() => {
+    setDialogOpen(false);
+  }, []);
+
   return (
     <Sidebar collapsible='none'>
       <SidebarHeader>
@@ -39,10 +42,10 @@ export function DocumentSidebar({ templates }: { templates: TextFile[] }) {
             </Button>
           </DialogTrigger>
           <DialogContent className='sm:max-w-[425px]'>
-            <DocumentFormDialogContent
+            <DocumentFormDialogContentMemoized
               mode='create'
               shouldReset={!dialogOpen}
-              postSubmit={() => setDialogOpen(false)}
+              postSubmit={closeDialog}
               templates={templates}
             />
           </DialogContent>
@@ -54,7 +57,7 @@ export function DocumentSidebar({ templates }: { templates: TextFile[] }) {
           <SidebarGroupContent>
             <SidebarMenu>
               {documents.map((doc, index) => (
-                <MemoizedDocumentMenuItem key={index} name={doc.name} />
+                <DocumentMenuItemMemoized key={index} name={doc.name} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

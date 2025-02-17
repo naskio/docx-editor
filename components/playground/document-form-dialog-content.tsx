@@ -55,7 +55,7 @@ const labels = {
   },
 };
 
-export function DocumentFormDialogContent({
+function DocumentFormDialogContent({
   mode,
   shouldReset,
   postSubmit,
@@ -189,3 +189,7 @@ export function DocumentFormDialogContent({
     </Form>
   );
 }
+
+export const DocumentFormDialogContentMemoized = React.memo(
+  DocumentFormDialogContent
+);

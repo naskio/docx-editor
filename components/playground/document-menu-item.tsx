@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FileIcon } from 'lucide-react';
-import { DocumentFormDialogContent } from '@/components/playground/document-form-dialog-content';
+import { DocumentFormDialogContentMemoized } from '@/components/playground/document-form-dialog-content';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -20,7 +20,7 @@ export const isMac: boolean =
     ? navigator.userAgent.toUpperCase().indexOf('MAC') >= 0
     : false;
 
-export function DocumentMenuItem({ name }: { name: string }) {
+function DocumentMenuItem({ name }: { name: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState<boolean>(false);
@@ -29,6 +29,14 @@ export function DocumentMenuItem({ name }: { name: string }) {
   const document = useDocumentsStore((state) =>
     state.documents.find((doc) => doc.name === name)
   );
+
+  const closeRenameDialog = useCallback(() => {
+    setIsRenameDialogOpen(false);
+  }, []);
+
+  const closeDeleteDialog = useCallback(() => {
+    setIsDeleteDialogOpen(false);
+  }, []);
 
   return (
     <SidebarMenuItem>
@@ -108,10 +116,10 @@ export function DocumentMenuItem({ name }: { name: string }) {
             buttonRef.current?.focus();
           }}
         >
-          <DocumentFormDialogContent
+          <DocumentFormDialogContentMemoized
             mode='update'
             shouldReset={!isRenameDialogOpen}
-            postSubmit={() => setIsRenameDialogOpen(false)}
+            postSubmit={closeRenameDialog}
             selectedName={name}
           />
         </DialogContent>
@@ -124,10 +132,10 @@ export function DocumentMenuItem({ name }: { name: string }) {
             buttonRef.current?.focus();
           }}
         >
-          <DocumentFormDialogContent
+          <DocumentFormDialogContentMemoized
             mode='delete'
             shouldReset={!isDeleteDialogOpen}
-            postSubmit={() => setIsDeleteDialogOpen(false)}
+            postSubmit={closeDeleteDialog}
             selectedName={name}
           />
         </DialogContent>
@@ -135,3 +143,5 @@ export function DocumentMenuItem({ name }: { name: string }) {
     </SidebarMenuItem>
   );
 }
+
+export const DocumentMenuItemMemoized = React.memo(DocumentMenuItem);
