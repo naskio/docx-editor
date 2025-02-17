@@ -11,12 +11,12 @@ import { Separator } from '@/components/ui/separator';
 import { JSEditor } from '@/components/playground/js-editor';
 import type { TextFile } from '@/lib/types';
 
-// TODO: display + handle errors
 export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   const { setOutput } = useOutputStore((state) => state);
   const { openTabs, activeTab, setActiveTab, documents, closeDocument } =
     useDocumentsStore((state) => state);
   const [isCompiling, setIsCompiling] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>(``);
   const workerRef = useRef<Worker | null>(
     (() => {
       if (typeof window !== 'undefined') {
@@ -45,26 +45,29 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
       }>
     ) => {
       if (event.data.name !== activeTab) {
-        console.log('worker.onmessage(name!==activeTab)', event.data);
+        console.debug('worker.onmessage(name!==activeTab)', event.data);
         return;
       }
       if (event.data.status === 'success') {
         setOutput(event.data.name, event.data.payload);
       } else {
-        console.log('worker.onmessage(type===error)', event.data);
+        console.debug('worker.onmessage(type===error)', event.data);
+        setErrorMessage(String(event.data.payload));
       }
       setIsCompiling(false);
     },
     [activeTab, setOutput]
   );
   const onerror = useCallback((error: ErrorEvent) => {
-    console.log('worker.onerror', error);
+    console.debug('worker.onerror', error);
     setIsCompiling(false);
+    setErrorMessage(String(error));
   }, []);
 
   const onmessageerror = useCallback((error: MessageEvent) => {
-    console.log('worker.onmessageerror', error);
+    console.debug('worker.onmessageerror', error);
     setIsCompiling(false);
+    setErrorMessage(String(error));
   }, []);
 
   if (workerRef.current) {
@@ -77,6 +80,7 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   useEffect(() => {
     const activeFile = documents.find((doc) => doc.name === activeTab);
     if (activeFile && workerRef.current) {
+      setErrorMessage(``);
       setIsCompiling(true);
       workerRef.current.postMessage({
         name: activeFile.name,
@@ -138,6 +142,7 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
                     name={doc.name}
                     defaultValue={doc.text}
                     declarationFiles={declarationFiles}
+                    errorMessage={errorMessage}
                   />
                 </TabsContent>
               );

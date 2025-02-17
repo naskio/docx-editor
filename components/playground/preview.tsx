@@ -43,7 +43,7 @@ export function Preview() {
       setIsRendering(true);
       renderDocx(out.name, out.blob, renderingLibrary).then(
         ({ status, payload }) => {
-          console.log(`re-rendering ${out.name} with ${renderingLibrary}`);
+          console.debug(`re-rendering ${out.name} with ${renderingLibrary}`);
           if (!isMounted) return;
           if (status === 'success') {
             const iframeEl = payload as HTMLIFrameElement;
@@ -58,7 +58,7 @@ export function Preview() {
               setIframeSrcDoc(undefined);
             }
           } else {
-            console.log('renderDocx', payload);
+            console.error('renderDocx', payload);
           }
           setIsRendering(false);
         }

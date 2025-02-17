@@ -1,3 +1,8 @@
+/**
+ * The worker receives a message with the user's code and returns a message with the Blob or an error.
+ * We use a Web Worker to run the user's code in a separate thread and avoid blocking the main thread.
+ */
+
 import * as docx from 'docx';
 
 async function buildDocx(code: string): Promise<Blob> {
