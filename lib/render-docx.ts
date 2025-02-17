@@ -1,5 +1,7 @@
-import * as docx_preview from 'docx-preview'; // aka docxjs
-import mammoth from 'mammoth'; // aka mammoth.js
+// aka docxjs
+import * as docx_preview from 'docx-preview';
+// aka mammoth.js
+import mammoth from 'mammoth';
 import { env } from '@/lib/env';
 import type { Settings } from '@/lib/types';
 
