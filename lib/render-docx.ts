@@ -89,8 +89,8 @@ export async function renderDocx(
   > = {
     docxjs: renderWithDocxJS,
     'mammoth.js': renderWithMammothJS,
-    'Google Docs': renderWithGoogleDocs,
     Office: renderWithMicrosoftOffice,
+    Docs: renderWithGoogleDocs,
   };
   return renderer[library](blob)
     .then((iframeEl) => {

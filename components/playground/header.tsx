@@ -6,7 +6,6 @@ import { buttonVariants } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { env } from '@/lib/env';
@@ -56,14 +55,12 @@ export function Header() {
             `Follow on Twitter`,
           ],
         ].map(([icon, label], index) => (
-          <TooltipProvider key={index}>
-            <Tooltip>
-              <TooltipTrigger asChild>{icon}</TooltipTrigger>
-              <TooltipContent>
-                <p>{label}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip key={index}>
+            <TooltipTrigger asChild>{icon}</TooltipTrigger>
+            <TooltipContent>
+              <p>{label}</p>
+            </TooltipContent>
+          </Tooltip>
         ))}
         <ModeToggle />
       </div>

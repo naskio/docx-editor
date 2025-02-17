@@ -3,10 +3,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function PreviewFrame({
+  ref,
   isLoading,
   iframeSrc,
   iframeSrcDoc,
 }: {
+  ref?: React.Ref<HTMLIFrameElement>;
   isLoading: boolean;
   iframeSrc?: string;
   iframeSrcDoc?: string;
@@ -22,6 +24,7 @@ function PreviewFrame({
     return (
       <ScrollArea className='grow [&>div>div]:!h-full'>
         <iframe
+          ref={ref}
           className='h-full w-full'
           src={iframeSrc}
           srcDoc={iframeSrcDoc}

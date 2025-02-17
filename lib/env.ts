@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const renderingLibraryOptions = [
   'docxjs',
   'mammoth.js',
-  'Google Docs',
   'Office',
+  'Docs',
 ];
 
 const envSchema = z.object({

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 // fonts
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
 // These styles apply to every route in the application
 import './globals.css';
 
@@ -33,7 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SaveIcon } from 'lucide-react';
+import { SaveIcon, RefreshCwIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -11,7 +11,6 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { download } from '@/lib/download';
@@ -22,18 +21,20 @@ function PreviewHeader({
   blob,
   renderingLibrary,
   setRenderingLibrary,
+  forceReloadIframe,
 }: {
   name: string;
   blob?: Blob;
   renderingLibrary: string;
   setRenderingLibrary: (library: string) => void;
+  forceReloadIframe: () => void;
 }) {
   return (
     <>
       <div className='bg-sidebar flex flex-row flex-wrap items-center justify-between gap-y-2 p-2'>
         <p className='text-muted-foreground text-sm font-medium'>{name}</p>
         <div className='flex flex-row gap-x-2'>
-          <TooltipProvider>
+          {[`Office`, `Docs`].includes(renderingLibrary) && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -41,18 +42,34 @@ function PreviewHeader({
                   size='icon'
                   className='bg-sidebar text-sidebar-foreground'
                   disabled={!blob}
-                  onClick={() => {
-                    if (blob) download(`${name}.docx`, blob);
-                  }}
+                  onClick={forceReloadIframe}
                 >
-                  <SaveIcon />
+                  <RefreshCwIcon />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Download .docx</p>
+                <p>Reload</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='outline'
+                size='icon'
+                className='bg-sidebar text-sidebar-foreground'
+                disabled={!blob}
+                onClick={() => {
+                  if (blob) download(`${name}.docx`, blob);
+                }}
+              >
+                <SaveIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Download .docx</p>
+            </TooltipContent>
+          </Tooltip>
           <Select value={renderingLibrary} onValueChange={setRenderingLibrary}>
             <SelectTrigger className='w-[128px]'>
               <SelectValue placeholder='Select a library' />
