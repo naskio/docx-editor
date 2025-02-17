@@ -9,6 +9,10 @@ const config = {
   singleQuote: true,
   jsxSingleQuote: true,
   importOrder: [
+    '^react$',
+    '^jest$',
+    '^next(.*)$',
+    '^lucide-react$',
     '<THIRD_PARTY_MODULES>',
     '^@/app/(.*)$',
     '^@/components/(.*)$',
