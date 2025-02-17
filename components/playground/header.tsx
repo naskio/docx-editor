@@ -14,7 +14,7 @@ import { env } from '@/lib/env';
 
 export function Header() {
   return (
-    <div className='grid h-full grid-cols-1 items-center px-5 sm:grid-cols-3'>
+    <div className='grid grid-cols-1 items-center px-5 py-4 sm:grid-cols-3 sm:py-6'>
       <p className='text-muted-foreground hidden text-start text-sm sm:block'>
         Create .docx on the browser
       </p>
