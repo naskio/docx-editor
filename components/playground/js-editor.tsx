@@ -185,7 +185,7 @@ export function JSEditor({
         },
       ]);
     }
-  }, [errorMessage]);
+  }, [errorMessage, defaultValue, name]);
 
   return (
     <>
