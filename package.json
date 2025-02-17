@@ -82,7 +82,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@monaco-editor/react": "patches/@monaco-editor__react.patch"
+      "@monaco-editor/react@4.7.0-rc.0": "patches/@monaco-editor__react.patch"
     }
   }
 }
