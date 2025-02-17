@@ -79,10 +79,10 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
 
   // re-build on active tab change or any document change
   useEffect(() => {
+    setErrorMessage(``); // reset error message when active tab changes or any document change
     const activeFile = documents.find((doc) => doc.name === activeTab);
     if (activeFile && workerRef.current) {
-      setErrorMessage(``);
-      setIsCompiling(true);
+      setIsCompiling(true); // compile if there is an active file
       workerRef.current.postMessage({
         name: activeFile.name,
         text: activeFile.text,
