@@ -7,8 +7,8 @@ import { env } from '@/lib/env';
 
 export default function HeroPage() {
   return (
-    <section className='flex h-screen flex-col items-center justify-center'>
-      <div className='container'>
+    <main className='flex h-screen flex-col items-center justify-center'>
+      <section className='container'>
         <div
           className='absolute inset-x-0 top-0 -z-10 flex h-full w-full items-center justify-center dark:invert'
           style={{
@@ -87,7 +87,7 @@ export default function HeroPage() {
             </p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
