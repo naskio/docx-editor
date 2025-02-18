@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'node:fs/promises';
-import * as os from 'node:os';
 import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
+import { TMP_DIR } from '@/lib/file-system';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit
-export const TMP_DIR = path.join(os.tmpdir(), 'docx-editor');
 
 export async function POST(req: NextRequest) {
   try {

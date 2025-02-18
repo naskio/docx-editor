@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { TMP_DIR } from '@/app/api/uploads/route';
+import { TMP_DIR } from '@/lib/file-system';
 
 export async function GET(
   request: NextRequest,

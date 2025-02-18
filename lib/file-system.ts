@@ -1,7 +1,10 @@
 import mime from 'mime-types';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { TextFile } from '@/lib/types';
+
+export const TMP_DIR = path.join(os.tmpdir(), 'docx-editor');
 
 export function loadTextFile(filePath: string): TextFile {
   const fileContent = fs.readFileSync(filePath, 'utf8');
