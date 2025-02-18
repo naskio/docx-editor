@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { TMP_DIR } from '@/app/api/uploads/route';
 
 export async function GET(
   request: NextRequest,
@@ -10,7 +11,7 @@ export async function GET(
   if (!fileId) {
     return new NextResponse(`File ID not provided`, { status: 400 });
   }
-  const filePath = path.join(process.cwd(), 'media', `${fileId}.docx`);
+  const filePath = path.join(TMP_DIR, `${fileId}.docx`);
   const fileExists = await fs
     .access(filePath)
     .then(() => true)
