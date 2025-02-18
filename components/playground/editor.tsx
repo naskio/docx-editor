@@ -62,16 +62,16 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   );
   const onerror = useCallback(
     (error: ErrorEvent) => {
-      console.error('worker.onerror', error.error);
+      console.error('worker.onerror', error);
       setIsCompiling(false);
-      setOutput({ errorMessage: String(error.error) });
+      setOutput({ errorMessage: String(error.message) });
     },
     [setOutput]
   );
 
   const onmessageerror = useCallback(
     (error: MessageEvent) => {
-      console.error('worker.onmessageerror', error.data);
+      console.error('worker.onmessageerror', error);
       setIsCompiling(false);
       setOutput({ errorMessage: String(error.data) });
     },

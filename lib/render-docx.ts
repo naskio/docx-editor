@@ -2,6 +2,7 @@
 import * as docx_preview from 'docx-preview';
 // aka mammoth.js
 import mammoth from 'mammoth';
+import { uploadDocxFile as uploadDocxFileAction } from '@/app/uploads/actions';
 import { env } from '@/lib/env';
 import type { Settings } from '@/lib/types';
 
@@ -51,37 +52,44 @@ async function renderWithMammothJS(blob: Blob) {
   return iframeEl;
 }
 
-async function renderWithGoogleDocs(blob: Blob) {
-  // TODO: upload blob first to the server then generate URL
+async function renderWithGoogleDocs(fileUrl: string) {
   const url = new URL(`https://docs.google.com/gview`); // ?embedded=true&url=
   url.searchParams.append('embedded', 'true');
-  console.debug(`using sample url instead of blob`, blob.type);
   url.searchParams.append(
     'url',
-    `https://calibre-ebook.com/downloads/demos/demo.docx?__version__=${new Date().getTime()}` // to prevent caching
+    `${fileUrl}?__version__=${new Date().getTime()}` // to prevent caching
   );
   const iframeEl = document.createElement('iframe');
   iframeEl.src = url.toString();
   return iframeEl;
 }
 
-async function renderWithMicrosoftOffice(blob: Blob) {
-  // TODO: upload blob first to the server then generate URL
+async function renderWithMicrosoftOffice(fileUrl: string) {
   const url = new URL(`https://view.officeapps.live.com/op/embed.aspx`); // ?src=
-  console.debug(`using sample url instead of blob`, blob.type);
-  url.searchParams.append(
-    'src',
-    `https://calibre-ebook.com/downloads/demos/demo.docx`
-  );
+  url.searchParams.append('src', `${fileUrl}`);
   const iframeEl = document.createElement('iframe');
   iframeEl.src = url.toString();
   return iframeEl;
+}
+
+async function uploadDocxFile(baseUrl: string, blob: Blob): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', blob, 'preview.docx');
+  const response = await uploadDocxFileAction(formData);
+  if (response.status !== 200) {
+    throw new Error(
+      `[${response.status}] Failed to upload file: ${response.body}`
+    );
+  }
+  const fileId = response.body;
+  return `${baseUrl}/uploads/${fileId}/`;
 }
 
 export async function renderDocx(
   name: string,
   blob: Blob,
-  library: Settings['renderingLibrary']
+  library: Settings['renderingLibrary'],
+  baseUrl: string // e.g. 'http://localhost:3000' or 'http://localhost:3000/docx-editor'
 ) {
   const renderer: Record<
     Settings['renderingLibrary'],
@@ -89,8 +97,8 @@ export async function renderDocx(
   > = {
     docxjs: renderWithDocxJS,
     'mammoth.js': renderWithMammothJS,
-    Office: renderWithMicrosoftOffice,
-    Docs: renderWithGoogleDocs,
+    Office: (bl) => uploadDocxFile(baseUrl, bl).then(renderWithMicrosoftOffice),
+    Docs: (bl) => uploadDocxFile(baseUrl, bl).then(renderWithGoogleDocs),
   };
   return renderer[library](blob)
     .then((iframeEl) => {

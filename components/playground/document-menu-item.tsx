@@ -16,7 +16,7 @@ import { download } from '@/lib/download';
 import type { TextFile } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-export const isMac: boolean =
+const isMac: boolean =
   typeof window !== 'undefined'
     ? navigator.userAgent.toUpperCase().indexOf('MAC') >= 0
     : false;

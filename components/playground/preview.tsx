@@ -8,7 +8,13 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { useOutputStore } from '@/store/output-store-provider';
 import { useSettingsStore } from '@/store/settings-store-provider';
+import { env } from '@/lib/env';
 import { renderDocx } from '@/lib/render-docx';
+
+const baseUrl: string =
+  typeof window !== 'undefined'
+    ? `${window.location.origin}${env.basePath}`
+    : ``;
 
 export function Preview() {
   const { renderingLibrary, setRenderingLibrary } = useSettingsStore(
@@ -28,17 +34,19 @@ export function Preview() {
     let isMounted = true;
     if (blob) {
       setIsRendering(true);
-      renderDocx(title, blob, renderingLibrary).then(({ status, payload }) => {
-        if (!isMounted) return;
-        if (status === 'success') {
-          const iframeEl = payload as HTMLIFrameElement;
-          setIframeSrc(iframeEl.src || undefined);
-          setIframeSrcDoc(iframeEl.srcdoc || undefined);
-        } else {
-          console.error('renderDocx', payload);
+      renderDocx(title, blob, renderingLibrary, baseUrl).then(
+        ({ status, payload }) => {
+          if (!isMounted) return;
+          if (status === 'success') {
+            const iframeEl = payload as HTMLIFrameElement;
+            setIframeSrc(iframeEl.src || undefined);
+            setIframeSrcDoc(iframeEl.srcdoc || undefined);
+          } else {
+            console.error('renderDocx', payload);
+          }
+          setIsRendering(false);
         }
-        setIsRendering(false);
-      });
+      );
     }
     return () => {
       isMounted = false;
