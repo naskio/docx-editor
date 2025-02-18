@@ -2,7 +2,6 @@
 import * as docx_preview from 'docx-preview';
 // aka mammoth.js
 import mammoth from 'mammoth';
-import { uploadDocxFile as uploadDocxFileAction } from '@/app/actions';
 import { env } from '@/lib/env';
 import type { Settings } from '@/lib/types';
 
@@ -75,13 +74,20 @@ async function renderWithMicrosoftOffice(fileUrl: string) {
 async function uploadDocxFile(baseUrl: string, blob: Blob): Promise<string> {
   const formData = new FormData();
   formData.append('file', blob, 'preview.docx');
-  const response = await uploadDocxFileAction(formData);
-  if (response.status !== 200) {
+  const res = await fetch(`${baseUrl}/api/uploads`, {
+    method: 'POST',
+    body: formData,
+  });
+  const responseData = (await res.json()) as {
+    fileId?: string;
+    error?: string;
+  };
+  if (res.status !== 200) {
     throw new Error(
-      `[${response.status}] Failed to upload file: ${response.body}`
+      `[${res.status}] Failed to upload file: ${responseData.error}`
     );
   }
-  const fileId = response.body;
+  const fileId = responseData.fileId;
   return `${baseUrl}/api/uploads/${fileId}/`;
 }
 
