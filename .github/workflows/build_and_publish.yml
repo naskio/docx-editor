@@ -21,10 +21,19 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_REPOSITORY_URL: 'https://github.com/${{ github.repository }}'
+      NEXT_PUBLIC_TWITTER_URL: 'https://twitter.com/naskdev'
+      NEXT_PUBLIC_RENDERING_LIBRARIES: 'docxjs,mammoth.js'
+      OUTPUT: 'export'
     outputs:
       HAS_PAGES: ${{ steps.has-pages.outputs.HAS_PAGES }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Rename all route.ts files within app/ folder to route.skip.ts if OUTPUT is export
+        if: env.OUTPUT == 'export'
+        run: find app/ -name 'route.ts' -exec bash -c 'mv "$1" "${1%.ts}.skip.ts"' -- {} \;
 
       - name: Set HAS_PAGES to output
         id: has-pages
@@ -62,12 +71,6 @@ jobs:
       - run: pnpm test
 
       - run: pnpm build
-        env:
-          NEXT_PUBLIC_BASE_PATH: ${{ env.NEXT_PUBLIC_BASE_PATH }}
-          NEXT_PUBLIC_REPOSITORY_URL: 'https://github.com/${{ github.repository }}'
-          NEXT_PUBLIC_TWITTER_URL: 'https://twitter.com/naskdev'
-          NEXT_PUBLIC_RENDERING_LIBRARIES: 'docxjs,mammoth.js'
-          OUTPUT: '' # '' or 'export'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
