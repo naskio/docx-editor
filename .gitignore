@@ -49,3 +49,6 @@ tmp/
 *.tmp
 tmp.*
 *.tmp.*
+
+# Temporary docx files
+media/

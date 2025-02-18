@@ -31,3 +31,6 @@ next-env.d.ts
 
 # Patch Files
 *.patch
+
+# Temporary docx files
+media/
