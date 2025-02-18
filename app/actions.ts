@@ -21,13 +21,22 @@ export async function uploadDocxFile(formData: FormData) {
     return { status: 413, body: 'File size exceeds the limit' };
   }
 
-  const fileId = uuidv4();
-  const filePath = path.join(process.cwd(), 'media', `${fileId}.docx`);
+  const fileId = uuidv4(); // randomly generated file ID
+  const mediaDir = path.join(process.cwd(), 'media');
   // create parent directories if they don't exist
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  try {
+    await fs.mkdir(mediaDir, { recursive: true });
+  } catch {
+    return { status: 400, body: 'Failed to create parent dir' };
+  }
   // write the file to disk
+  const filePath = path.join(mediaDir, `${fileId}.docx`);
   const fileBuffer = await file.arrayBuffer();
-  await fs.writeFile(filePath, Buffer.from(fileBuffer));
+  try {
+    await fs.writeFile(filePath, Buffer.from(fileBuffer));
+  } catch {
+    return { status: 400, body: 'Failed to write file' };
+  }
   return {
     status: 200,
     body: fileId,
