@@ -22,6 +22,7 @@ const envSchema = z.object({
         arr.length > 0 &&
         arr.every((value) => renderingLibraryOptions.includes(value))
     ),
+  output: z.enum([`export`, ``]).default(``),
 });
 
 export const env = envSchema.parse({
@@ -29,4 +30,5 @@ export const env = envSchema.parse({
   repositoryUrl: process.env.NEXT_PUBLIC_REPOSITORY_URL,
   twitterUrl: process.env.NEXT_PUBLIC_TWITTER_URL,
   renderingLibraries: process.env.NEXT_PUBLIC_RENDERING_LIBRARIES,
+  output: process.env.OUTPUT,
 });
