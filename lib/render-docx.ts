@@ -2,7 +2,7 @@
 import * as docx_preview from 'docx-preview';
 // aka mammoth.js
 import mammoth from 'mammoth';
-import { uploadDocxFile as uploadDocxFileAction } from '@/app/uploads/actions';
+import { uploadDocxFile as uploadDocxFileAction } from '@/app/actions';
 import { env } from '@/lib/env';
 import type { Settings } from '@/lib/types';
 
@@ -82,7 +82,7 @@ async function uploadDocxFile(baseUrl: string, blob: Blob): Promise<string> {
     );
   }
   const fileId = response.body;
-  return `${baseUrl}/uploads/${fileId}/`;
+  return `${baseUrl}/api/uploads/${fileId}/`;
 }
 
 export async function renderDocx(
