@@ -203,7 +203,7 @@ function EditorMonacoJS({
       if (currentValue) saveDocument(name, currentValue);
       closeDocument(name);
     });
-    // should we initialize the error marker here? => bug
+    // should we initialize the error marker here? => cause a bug when we open multiple tabs (errorMessage shows in multiple tabs)
   }
 
   function handleEditorValidation(markers: IMarker[]) {
@@ -218,22 +218,20 @@ function EditorMonacoJS({
   }, [errorMessage, name]);
 
   return (
-    <>
-      <Editor
-        height='90vh'
-        defaultLanguage='javascript'
-        theme={`vs-${resolvedTheme}`}
-        defaultPath={`${name}.js`}
-        defaultValue={defaultValue}
-        beforeMount={handleEditorWillMount}
-        onMount={handleEditorDidMount}
-        onValidate={handleEditorValidation}
-        onChange={(value) => {
-          // save document on change if there is a value
-          if (value) debouncedSaveDocumentRef.current(name, value);
-        }}
-      />
-    </>
+    <Editor
+      height='90vh'
+      defaultLanguage='javascript'
+      theme={`vs-${resolvedTheme}`}
+      defaultPath={`${name}.js`}
+      defaultValue={defaultValue}
+      beforeMount={handleEditorWillMount}
+      onMount={handleEditorDidMount}
+      onValidate={handleEditorValidation}
+      onChange={(value) => {
+        // save document on change if there is a value
+        if (value) debouncedSaveDocumentRef.current(name, value);
+      }}
+    />
   );
 }
 

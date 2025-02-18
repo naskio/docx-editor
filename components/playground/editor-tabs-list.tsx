@@ -11,7 +11,7 @@ function EditorTabItem({ name }: { name: string }) {
     <TabsTrigger
       value={name}
       key={name}
-      autoFocus={true}
+      autoFocus={false}
       className='h-9 gap-x-2 border px-2 focus-visible:h-9 focus-visible:ring-1 focus-visible:ring-offset-0'
       onKeyDown={(e) => {
         // if delete or backspace is pressed => close the document
