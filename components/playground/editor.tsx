@@ -86,7 +86,8 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
 
   // re-build on active tab change or any document change
   useEffect(() => {
-    setOutput({ errorMessage: undefined }); // reset error message when active tab changes or any document change
+    // reset error message when active tab changes or any document change
+    // setOutput({ errorMessage: undefined }); // this will cause re-render of the EditorMonacoJS
     const activeFile = documents.find((doc) => doc.name === activeTab);
     if (activeFile && workerRef.current) {
       setIsCompiling(true); // compile if there is an active file

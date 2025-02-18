@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import Editor, {
   IMarker,
@@ -12,9 +12,7 @@ import {
   constrainedEditor,
 } from 'constrained-editor-plugin';
 import debounce from 'lodash.debounce';
-import { useShallow } from 'zustand/react/shallow';
 import { useDocumentsStore } from '@/store/documents-store-provider';
-import { useOutputStore } from '@/store/output-store-provider';
 import type { TextFile } from '@/lib/types';
 
 function getOpeningRange(code: string): [number, number, number, number] {
@@ -55,7 +53,7 @@ function getClosingRange(code: string): [number, number, number, number] {
   return result as [number, number, number, number];
 }
 
-function displayErrorMarker(
+function reSyncErrorMarker(
   monaco: Monaco | null,
   editor: IStandaloneCodeEditor | null,
   fileName: string,
@@ -111,24 +109,21 @@ function EditorMonacoJS({
   name,
   defaultValue,
   declarationFiles,
+  errorMessage,
 }: {
   name: string;
   defaultValue: string;
   declarationFiles: TextFile[];
+  errorMessage?: string;
 }) {
-  console.debug(`Render EditorMonacoJS (name: ${name})`);
+  console.debug(
+    `Render EditorMonacoJS (name: ${name}, errorMessage: ${errorMessage})`
+  );
   const editorRef = useRef<IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco>(null);
   const { resolvedTheme } = useTheme();
-  const saveDocument = useDocumentsStore(
-    useShallow((state) => state.saveDocument)
-  );
-  const closeDocument = useDocumentsStore(
-    useShallow((state) => state.closeDocument)
-  );
-  const errorMessage = useOutputStore(
-    useShallow((state) => state.errorMessage)
-  );
+  const saveDocument = useDocumentsStore((state) => state.saveDocument);
+  const closeDocument = useDocumentsStore((state) => state.closeDocument);
   const debouncedSaveDocumentRef = useRef(debounce(saveDocument, 300));
 
   // setup monaco editor syntax, type checking and IntelliSense
@@ -203,7 +198,7 @@ function EditorMonacoJS({
       if (currentValue) saveDocument(name, currentValue);
       closeDocument(name);
     });
-    // should we initialize the error marker here? => cause a bug when we open multiple tabs (errorMessage shows in multiple tabs)
+    // Don't init the error marker here => cause a bug when we open multiple tabs (errorMessage shows in multiple tabs)
   }
 
   function handleEditorValidation(markers: IMarker[]) {
@@ -211,11 +206,16 @@ function EditorMonacoJS({
   }
 
   // reflect error message in the editor
+  reSyncErrorMarker(monacoRef?.current, editorRef?.current, name, errorMessage);
+
   useEffect(() => {
-    const monaco = monacoRef?.current;
-    const editor = editorRef?.current;
-    displayErrorMarker(monaco, editor, name, errorMessage);
-  }, [errorMessage, name]);
+    const debouncedSaveDocument = debouncedSaveDocumentRef?.current;
+    return () => {
+      // cleanup
+      debouncedSaveDocument?.cancel();
+      console.debug(`EditorWillUnMount: (name: ${name})`);
+    };
+  }, [name]);
 
   return (
     <Editor
@@ -238,6 +238,12 @@ function EditorMonacoJS({
 export const EditorMonacoJSMemoized = React.memo(
   EditorMonacoJS,
   (prev, next) => {
-    return prev.name === next.name;
+    return (
+      prev.name === next.name &&
+      prev.errorMessage === next.errorMessage &&
+      prev.declarationFiles === next.declarationFiles
+      // defaultValue shouldn't cause re-render because it's only used in the initial render
+      // && prev.defaultValue === next.defaultValue
+    );
   }
 );
