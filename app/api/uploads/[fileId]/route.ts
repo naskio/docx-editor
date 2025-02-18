@@ -14,7 +14,10 @@ export async function GET(
   const fileExists = await fs
     .access(filePath)
     .then(() => true)
-    .catch(() => false);
+    .catch((err) => {
+      console.error(err);
+      return false;
+    });
   if (!fileExists) {
     return new NextResponse(`File '${fileId}' not found`, { status: 404 });
   }
@@ -27,7 +30,8 @@ export async function GET(
         },
       });
     })
-    .catch(() => {
+    .catch((err) => {
+      console.error(err);
       return new NextResponse(`Unknown error while reading file '${fileId}'`, {
         status: 400,
       });

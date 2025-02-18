@@ -37,9 +37,10 @@ export async function POST(req: NextRequest) {
     await fs.writeFile(filePath, Buffer.from(fileBuffer));
 
     return NextResponse.json({ fileId }, { status: 200 });
-  } catch {
+  } catch (err) {
+    console.error(err);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error` },
       { status: 500 }
     );
   }
