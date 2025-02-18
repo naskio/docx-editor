@@ -67,7 +67,7 @@ jobs:
           NEXT_PUBLIC_REPOSITORY_URL: 'https://github.com/${{ github.repository }}'
           NEXT_PUBLIC_TWITTER_URL: 'https://twitter.com/naskdev'
           NEXT_PUBLIC_RENDERING_LIBRARIES: 'docxjs,mammoth.js'
-          OUTPUT: 'export'
+          OUTPUT: '' # '' or 'export'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
