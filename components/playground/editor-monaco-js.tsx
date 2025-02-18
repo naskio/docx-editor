@@ -12,7 +12,9 @@ import {
   constrainedEditor,
 } from 'constrained-editor-plugin';
 import debounce from 'lodash.debounce';
+import { useShallow } from 'zustand/react/shallow';
 import { useDocumentsStore } from '@/store/documents-store-provider';
+import { useOutputStore } from '@/store/output-store-provider';
 import type { TextFile } from '@/lib/types';
 
 function getOpeningRange(code: string): [number, number, number, number] {
@@ -53,23 +55,83 @@ function getClosingRange(code: string): [number, number, number, number] {
   return result as [number, number, number, number];
 }
 
-export function JSEditor({
+function displayErrorMarker(
+  monaco: Monaco | null,
+  editor: IStandaloneCodeEditor | null,
+  fileName: string,
+  errorMessage?: string
+) {
+  // see: https://microsoft.github.io/monaco-editor/playground.html?source=v0.52.2#example-interacting-with-the-editor-rendering-glyphs-in-the-margin
+  const model = editor?.getModel();
+  const currentValue = editor?.getValue() || ``;
+  if (monaco && editor && model) {
+    // if monaco, editor and model are ready
+    const where: string = `start`; // start | end | all
+    let range: [number, number, number, number];
+    if (where === `start`) {
+      // highlight only opening range
+      range = getOpeningRange(currentValue);
+    } else if (where === `end`) {
+      // highlight only closing range
+      range = getClosingRange(currentValue);
+      range[2] = range[0];
+      range[3] = range[1];
+      range[1] = 1;
+    } else {
+      // highlight the whole function
+      const sRange = getOpeningRange(currentValue);
+      const eRange = getClosingRange(currentValue);
+      range = [sRange[0] + 1, 1, eRange[0], eRange[1]];
+    }
+    // if range not valid, fallback to first line / first column
+    if (range.includes(-1)) {
+      range = [1, 1, 1, 1]; // default to first line
+    }
+    // add error marker if there is an error message and there is some code
+    if (errorMessage && currentValue) {
+      monaco.editor.setModelMarkers(model, fileName, [
+        {
+          startLineNumber: range[0],
+          startColumn: range[1],
+          endLineNumber: range[2],
+          endColumn: range[3],
+          message: errorMessage,
+          severity: monaco.MarkerSeverity.Error,
+          code: 'docx-editor',
+        },
+      ]);
+    } else {
+      // remove error marker
+      monaco.editor.setModelMarkers(model, fileName, []);
+    }
+  }
+}
+
+function EditorMonacoJS({
   name,
   defaultValue,
   declarationFiles,
-  errorMessage,
 }: {
   name: string;
   defaultValue: string;
   declarationFiles: TextFile[];
-  errorMessage: string;
 }) {
+  console.debug(`Render EditorMonacoJS (name: ${name})`);
   const editorRef = useRef<IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco>(null);
   const { resolvedTheme } = useTheme();
-  const { saveDocument, closeDocument } = useDocumentsStore((state) => state);
+  const saveDocument = useDocumentsStore(
+    useShallow((state) => state.saveDocument)
+  );
+  const closeDocument = useDocumentsStore(
+    useShallow((state) => state.closeDocument)
+  );
+  const errorMessage = useOutputStore(
+    useShallow((state) => state.errorMessage)
+  );
   const debouncedSaveDocumentRef = useRef(debounce(saveDocument, 300));
 
+  // setup monaco editor syntax, type checking and IntelliSense
   function handleEditorWillMount(monaco: Monaco) {
     // do something before editor is mounted
     // see: https://monaco-react.surenatoyan.com/
@@ -105,6 +167,7 @@ export function JSEditor({
   }
 
   function handleEditorDidMount(editor: IStandaloneCodeEditor, monaco: Monaco) {
+    console.debug(`EditorDidMount: (name: ${name})`);
     editorRef.current = editor;
     monacoRef.current = monaco;
     // allow edit only inside function generateDocument scope
@@ -140,52 +203,19 @@ export function JSEditor({
       if (currentValue) saveDocument(name, currentValue);
       closeDocument(name);
     });
+    // should we initialize the error marker here? => bug
   }
 
   function handleEditorValidation(markers: IMarker[]) {
-    markers.forEach((marker) => {
-      console.debug(`onValidate.marker`, marker);
-    });
+    void markers;
   }
 
-  // display error message
+  // reflect error message in the editor
   useEffect(() => {
-    // see: https://microsoft.github.io/monaco-editor/playground.html?source=v0.52.2#example-interacting-with-the-editor-rendering-glyphs-in-the-margin
     const monaco = monacoRef?.current;
     const editor = editorRef?.current;
-    const model = editor?.getModel();
-    if (monaco && editor && model) {
-      const where: string = `start`; // start | end | all
-      let range: [number, number, number, number];
-      if (where === `start`) {
-        range = getOpeningRange(defaultValue);
-      } else if (where === `end`) {
-        range = getClosingRange(defaultValue);
-        range[2] = range[0];
-        range[3] = range[1];
-        range[1] = 1;
-      } else {
-        const sRange = getOpeningRange(defaultValue);
-        const eRange = getClosingRange(defaultValue);
-        range = [sRange[0] + 1, 1, eRange[0], eRange[1]];
-      }
-      // check range is valid
-      if (range.includes(-1)) {
-        range = [1, 1, 1, 1]; // default to first line
-      }
-      monaco.editor.setModelMarkers(model, name, [
-        {
-          startLineNumber: range[0],
-          startColumn: range[1],
-          endLineNumber: range[2],
-          endColumn: range[3],
-          message: errorMessage,
-          severity: monaco.MarkerSeverity.Error,
-          code: 'docx-editor',
-        },
-      ]);
-    }
-  }, [errorMessage, defaultValue, name]);
+    displayErrorMarker(monaco, editor, name, errorMessage);
+  }, [errorMessage, name]);
 
   return (
     <>
@@ -199,9 +229,17 @@ export function JSEditor({
         onMount={handleEditorDidMount}
         onValidate={handleEditorValidation}
         onChange={(value) => {
+          // save document on change if there is a value
           if (value) debouncedSaveDocumentRef.current(name, value);
         }}
       />
     </>
   );
 }
+
+export const EditorMonacoJSMemoized = React.memo(
+  EditorMonacoJS,
+  (prev, next) => {
+    return prev.name === next.name;
+  }
+);
