@@ -99,7 +99,11 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   }, [documents, activeTab, setOutput]);
 
   if (!openTabs.length) {
-    return null;
+    return (
+      <div className='flex flex-col text-muted-foreground h-full items-center justify-center'>
+        {!documents?.length ? 'Create a new document...' : 'Open a document...'}
+      </div>
+    );
   }
 
   return (
