@@ -105,7 +105,9 @@ function PreviewHeader({
               {env.renderingLibraries.map((library, index) => (
                 <SelectItem value={library} key={index}>
                   <Tooltip>
-                    <TooltipTrigger>{tooltips[library][0]}</TooltipTrigger>
+                    <TooltipTrigger tabIndex={-1}>
+                      {tooltips[library][0]}
+                    </TooltipTrigger>
                     <TooltipContent>{tooltips[library][1]}</TooltipContent>
                   </Tooltip>
                   {` `}
