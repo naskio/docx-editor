@@ -71,10 +71,26 @@ async function renderWithMicrosoftOffice(fileUrl: string) {
   return iframeEl;
 }
 
-async function uploadDocxFile(baseUrl: string, blob: Blob): Promise<string> {
+async function uploadDocxFile(
+  baseUrl: string,
+  name: string,
+  code?: string,
+  file?: Blob
+): Promise<string> {
   const formData = new FormData();
-  formData.append('file', blob, 'preview.docx');
-  const res = await fetch(`${baseUrl}/api/uploads`, {
+  let endpoint: string | undefined;
+  if (file) {
+    endpoint = `uploads`;
+    formData.append('file', file, `${name}.docx`);
+  }
+  if (code) {
+    endpoint = `docx`;
+    formData.append('code', code);
+  }
+  if (!endpoint) {
+    throw new Error('Either file or code must be provided');
+  }
+  const res = await fetch(`${baseUrl}/api/${endpoint}`, {
     method: 'POST',
     body: formData,
   });
@@ -88,11 +104,18 @@ async function uploadDocxFile(baseUrl: string, blob: Blob): Promise<string> {
     );
   }
   const fileId = responseData.fileId;
+  if (baseUrl.includes(`localhost`)) {
+    console.debug(
+      `localhost detected, using sample docx file instead (we need a public URL)`
+    );
+    return `https://calibre-ebook.com/downloads/demos/demo.docx`;
+  }
   return `${baseUrl}/api/uploads/${fileId}/`;
 }
 
 export async function renderDocx(
   name: string,
+  text: string,
   blob: Blob,
   library: Settings['renderingLibrary'],
   baseUrl: string // e.g. 'http://localhost:3000' or 'http://localhost:3000/docx-editor'
@@ -103,8 +126,9 @@ export async function renderDocx(
   > = {
     docxjs: renderWithDocxJS,
     'mammoth.js': renderWithMammothJS,
-    Office: (bl) => uploadDocxFile(baseUrl, bl).then(renderWithMicrosoftOffice),
-    Docs: (bl) => uploadDocxFile(baseUrl, bl).then(renderWithGoogleDocs),
+    Office: () =>
+      uploadDocxFile(baseUrl, name, text).then(renderWithMicrosoftOffice),
+    Docs: () => uploadDocxFile(baseUrl, name, text).then(renderWithGoogleDocs),
   };
   return renderer[library](blob)
     .then((iframeEl) => {
