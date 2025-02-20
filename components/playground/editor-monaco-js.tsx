@@ -16,7 +16,7 @@ import { useDocumentsStore } from '@/store/documents-store-provider';
 import type { TextFile } from '@/lib/types';
 
 function getOpeningRange(code: string): [number, number, number, number] {
-  /** range of `function generateDocument() {` */
+  /** range of first line that starts with `function` */
   // startLineNumber, startColumn, endLineNumber, endColumn
   const result = [-1, -1, -1, -1];
   const lines = code.split('\n');
