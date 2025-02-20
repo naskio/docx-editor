@@ -44,8 +44,8 @@ export default function RootLayout({
 // HTML metadata
 export const metadata: Metadata = {
   title: {
-    template: `%s | Docx Editor`,
-    default: `Docx Editor`,
+    template: `%s | Docx.js Editor`,
+    default: `Docx.js Editor`,
   },
-  description: `Browser-based editor for creating .docx files using JS/TS with live preview`,
+  description: `Browser-based editor for creating Word documents using the JavaScript library Docx.js with live preview support.`,
 };
