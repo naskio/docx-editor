@@ -70,18 +70,8 @@ export default function HeroPage() {
                     target='_blank'
                     rel='noopener noreferrer'
                   >
-                    GitHub
-                  </Link>
-                  <Link
-                    href={env.repositoryUrl}
-                    className={cn(
-                      buttonVariants({ variant: 'ghost', size: 'icon' }),
-                      `ml-0 text-amber-400 sm:ml-1`
-                    )}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    <StarIcon />
+                    GitHub{' '}
+                    <StarIcon className='text-amber-400 size-5 inline align-text-top' />
                   </Link>
                 </>
               )}
