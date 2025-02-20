@@ -10,6 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
@@ -46,10 +51,17 @@ export function ButtonModeToggle() {
   }, [resolvedTheme, setTheme]);
 
   return (
-    <Button variant='outline' size='icon' onClick={toggleTheme}>
-      <Sun className='hidden dark:block' />
-      <Moon className='block dark:hidden' />
-      <span className='sr-only'>Toggle theme</span>
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant='outline' size='icon' onClick={toggleTheme}>
+          <Sun className='hidden dark:block' />
+          <Moon className='block dark:hidden' />
+          <span className='sr-only'>Toggle theme</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Toggle theme</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
