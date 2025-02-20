@@ -15,6 +15,20 @@ import {
 } from '@/components/ui/tooltip';
 import { download } from '@/lib/download';
 import { env } from '@/lib/env';
+import type { Settings } from '@/lib/types';
+
+const tooltips: Record<Settings['renderingLibrary'], [string, string]> = {
+  docxjs: [`⚡`, `(Recommended) works in the browser`],
+  'mammoth.js': [`🦣`, `(Recommended) works in the browser`],
+  Office: [
+    `⚠️`,
+    `(Not recommended) requires file upload/publicly accessible URL`,
+  ],
+  Docs: [
+    `⚠️`,
+    `(Not recommended) requires file upload/publicly accessible URL`,
+  ],
+};
 
 function PreviewHeader({
   name,
@@ -77,12 +91,17 @@ function PreviewHeader({
             </TooltipContent>
           </Tooltip>
           <Select value={renderingLibrary} onValueChange={setRenderingLibrary}>
-            <SelectTrigger className='w-[128px]'>
+            <SelectTrigger className='w-[144px]'>
               <SelectValue placeholder='Select a library' />
             </SelectTrigger>
             <SelectContent className='text-sidebar-foreground'>
               {env.renderingLibraries.map((library, index) => (
                 <SelectItem value={library} key={index}>
+                  <Tooltip>
+                    <TooltipTrigger>{tooltips[library][0]}</TooltipTrigger>
+                    <TooltipContent>{tooltips[library][1]}</TooltipContent>
+                  </Tooltip>
+                  {` `}
                   {library}
                 </SelectItem>
               ))}
