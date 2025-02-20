@@ -97,8 +97,9 @@ function DocumentFormDialogContent({
     ),
   });
 
+  // reset form
   useEffect(() => {
-    if (shouldReset) form.reset(); // reset form
+    if (shouldReset) form.reset();
   }, [form, shouldReset]);
 
   const onSubmit = form.handleSubmit(({ name, template }) => {

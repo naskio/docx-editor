@@ -212,6 +212,7 @@ function EditorMonacoJS({
   // reflect error message in the editor
   reSyncErrorMarker(monacoRef?.current, editorRef?.current, name, errorMessage);
 
+  // cancel debounced saveDocument on unmount
   useEffect(() => {
     const debouncedSaveDocument = debouncedSaveDocumentRef?.current;
     return () => {

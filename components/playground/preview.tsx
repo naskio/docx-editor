@@ -80,7 +80,7 @@ export function Preview() {
         setRenderingLibrary={setRenderingLibrary}
       />
       <Separator />
-      {!iframeSrc && !iframeSrcDoc && Boolean(globalError) && (
+      {Boolean(globalError) && (
         <div className='px-3 py-3'>
           <Alert
             variant='destructive'

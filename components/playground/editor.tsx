@@ -108,10 +108,10 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
 
   // re-build on active tab change or any document change
   useEffect(() => {
-    // reset error message when active tab changes or any document change
-    // setOutput({ globalError: undefined }); // this will cause Preview to re-render
     const activeFile = documents.find((doc) => doc.name === activeTab);
     if (activeFile && workerRef.current) {
+      // reset error message when we start compiling
+      setOutput({ globalError: undefined }); // this will re-render Preview
       setIsCompiling(true); // compile if there is an active file
       workerRef.current.postMessage({
         name: activeFile.name,
