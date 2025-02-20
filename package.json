@@ -1,6 +1,6 @@
 {
-  "name": "docx-editor",
-  "description": "Web-based editor for docx.js with live preview",
+  "name": "docxjs-editor",
+  "description": "A browser-based, client-side editor for docx.js, providing live previews of your Word documents as you code.",
   "version": "0.1.0",
   "private": false,
   "license": "MIT",
