@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { PreviewFrameMemoized } from '@/components/playground/preview-frame';
 import { PreviewHeaderMemoized } from '@/components/playground/preview-header';
@@ -10,31 +10,47 @@ import { useOutputStore } from '@/store/output-store-provider';
 import { useSettingsStore } from '@/store/settings-store-provider';
 import { env } from '@/lib/env';
 import { renderDocx } from '@/lib/render-docx';
+import type { Settings } from '@/lib/types';
 
+// needed to build a publicly accessible URL when rendering using Office or Docs
 const baseUrl: string =
   typeof window !== 'undefined'
     ? `${window.location.origin}${env.basePath}`
     : ``;
 
+const debounceWaits: Record<Settings['renderingLibrary'], number> = {
+  docxjs: 300,
+  'mammoth.js': 300,
+  Office: 3000,
+  Docs: 5000,
+};
+
 export function Preview() {
-  const { renderingLibrary, setRenderingLibrary } = useSettingsStore(
-    (state) => state
-  );
-  const { name, blob, errorMessage } = useOutputStore((state) => state);
+  const { renderingLibrary, setSettings } = useSettingsStore((state) => state);
+  const { name, text, blob, globalError } = useOutputStore((state) => state);
   const [isRendering, setIsRendering] = useState<boolean>(false);
   const [iframeSrc, setIframeSrc] = useState<string | undefined>(undefined);
   const [iframeSrcDoc, setIframeSrcDoc] = useState<string | undefined>(
     undefined
   );
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
-  const title = name || `Preview`;
+
+  const setRenderingLibrary = useCallback(
+    (library: string) => {
+      setSettings({
+        renderingLibrary: library,
+        saveDocumentDebounceWait: debounceWaits[library],
+      });
+    },
+    [setSettings]
+  );
 
   // re-render on out change or renderingLibrary change
   useEffect(() => {
     let isMounted = true;
-    if (blob) {
+    if (name && text && blob) {
       setIsRendering(true);
-      renderDocx(title, blob, renderingLibrary, baseUrl).then(
+      renderDocx(name, text, blob, renderingLibrary, baseUrl).then(
         ({ status, payload }) => {
           if (!isMounted) return;
           if (status === 'success') {
@@ -51,20 +67,20 @@ export function Preview() {
     return () => {
       isMounted = false;
     };
-  }, [title, blob, renderingLibrary]);
+  }, [name, text, blob, renderingLibrary]);
 
   return (
     <div className='flex h-full flex-col'>
       <PreviewHeaderMemoized
         iframeRef={iframeRef}
         displayReloadButton={Boolean(iframeSrc)}
-        name={title}
+        name={name || `Preview`}
         blob={blob}
         renderingLibrary={renderingLibrary}
         setRenderingLibrary={setRenderingLibrary}
       />
       <Separator />
-      {!iframeSrc && !iframeSrcDoc && Boolean(errorMessage) && (
+      {!iframeSrc && !iframeSrcDoc && Boolean(globalError) && (
         <div className='px-3 py-3'>
           <Alert
             variant='destructive'
@@ -73,7 +89,7 @@ export function Preview() {
             <AlertCircle className='h-5 w-5 dark:text-white' />
             <AlertTitle className='text-lg font-bold'>Error:</AlertTitle>
             <AlertDescription className='text-md font-bold'>
-              {errorMessage?.replace(`Error:`, '')}
+              {globalError?.replace(`Error:`, '')}
             </AlertDescription>
           </Alert>
         </div>
