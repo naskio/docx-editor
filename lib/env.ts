@@ -8,7 +8,12 @@ export const renderingLibraryOptions = [
 ];
 
 const envSchema = z.object({
-  basePath: z.string().default(``),
+  basePath: z
+    .string()
+    .default(``)
+    .refine(
+      (value) => !value || (value.startsWith(`/`) && !value.endsWith(`/`))
+    ),
   repositoryUrl: z.string().optional(),
   twitterUrl: z.string().optional(),
   renderingLibraries: z
