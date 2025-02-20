@@ -20,10 +20,11 @@ export default function HeroPage() {
             <Logo width={288} height={72} />
             <div>
               <h1 className='mb-6 text-2xl font-bold text-pretty lg:text-5xl'>
-                Create word documents in the browser
+                Code and preview Word documents in the browser
               </h1>
               <p className='text-muted-foreground mx-2 sm:mx-0 lg:text-xl'>
-                A browser-based editor that helps you create .docx files using{' '}
+                A browser-based, client-side editor that helps you create .docx
+                files using the JavaScript library{' '}
                 <Link
                   href='https://docx.js.org/'
                   className='hover:underline'
