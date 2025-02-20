@@ -7,13 +7,22 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs } from '@/components/ui/tabs';
 import { useDocumentsStore } from '@/store/documents-store-provider';
 import { useOutputStore } from '@/store/output-store-provider';
+import { useSettingsStore } from '@/store/settings-store-provider';
 import type { TextFile } from '@/lib/types';
 
 export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   const setOutput = useOutputStore((state) => state.setOutput);
-  const { openTabs, activeTab, setActiveTab, documents } = useDocumentsStore(
-    (state) => state
+  const saveDocumentDebounceWait = useSettingsStore(
+    (state) => state.saveDocumentDebounceWait
   );
+  const {
+    openTabs,
+    activeTab,
+    setActiveTab,
+    documents,
+    buildErrors,
+    setBuildError,
+  } = useDocumentsStore((state) => state);
   const [, setIsCompiling] = useState<boolean>(false);
   const workerRef = useRef<Worker | null>(
     (() => {
@@ -38,42 +47,55 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
     (
       event: MessageEvent<{
         status: 'success' | 'error';
-        name: string;
-        payload: Blob;
+        payload: {
+          name: string;
+          text: string;
+          blob?: Blob;
+          buildError?: Error | string;
+        };
       }>
     ) => {
-      if (event.data.name !== activeTab) {
+      if (event.data.payload.name !== activeTab) {
         console.debug('worker.onmessage(name!==activeTab)', event.data);
         return;
       }
       if (event.data.status === 'success') {
         setOutput({
-          name: event.data.name,
-          blob: event.data.payload,
-          errorMessage: undefined,
+          name: event.data.payload.name,
+          text: event.data.payload.text,
+          blob: event.data.payload.blob,
+          globalError: undefined,
         });
+        setBuildError(event.data.payload.name, undefined);
       } else {
-        console.debug('worker.onmessage(type===error)', event.data);
-        setOutput({ errorMessage: String(event.data.payload) });
+        console.debug('worker.onmessage(status===error)', event.data);
+        setOutput({ globalError: String(event.data.payload.buildError) });
+        setBuildError(
+          event.data.payload.name,
+          String(event.data.payload.buildError)
+        );
       }
       setIsCompiling(false);
     },
-    [activeTab, setOutput]
+    [activeTab, setOutput, setBuildError]
   );
+
+  // when worker throws an error
   const onerror = useCallback(
     (error: ErrorEvent) => {
       console.error('worker.onerror', error);
       setIsCompiling(false);
-      setOutput({ errorMessage: String(error.message) });
+      setOutput({ globalError: String(error.message) });
     },
     [setOutput]
   );
 
+  // when worker throws an error while sending a message
   const onmessageerror = useCallback(
     (error: MessageEvent) => {
       console.error('worker.onmessageerror', error);
       setIsCompiling(false);
-      setOutput({ errorMessage: String(error.data) });
+      setOutput({ globalError: String(error.data) });
     },
     [setOutput]
   );
@@ -87,7 +109,7 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
   // re-build on active tab change or any document change
   useEffect(() => {
     // reset error message when active tab changes or any document change
-    // setOutput({ errorMessage: undefined }); // this will cause re-render of the EditorMonacoJS
+    // setOutput({ globalError: undefined }); // this will cause Preview to re-render
     const activeFile = documents.find((doc) => doc.name === activeTab);
     if (activeFile && workerRef.current) {
       setIsCompiling(true); // compile if there is an active file
@@ -112,9 +134,10 @@ export function Editor({ declarationFiles }: { declarationFiles: TextFile[] }) {
       <Separator />
       <EditorTabsContentMemoized
         openTabs={openTabs}
-        activeTab={activeTab}
         documents={documents}
+        buildErrors={buildErrors}
         declarationFiles={declarationFiles}
+        saveDocumentDebounceWait={saveDocumentDebounceWait}
       />
     </Tabs>
   );

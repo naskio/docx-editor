@@ -1,38 +1,34 @@
 import React from 'react';
-import { useShallow } from 'zustand/react/shallow';
 import { EditorMonacoJSMemoized } from '@/components/playground/editor-monaco-js';
 import { TabsContent } from '@/components/ui/tabs';
-import { useOutputStore } from '@/store/output-store-provider';
 import type { TextFile } from '@/lib/types';
 
 function TabContent({
-  isActive,
   name,
   text,
+  buildError,
   declarationFiles,
+  saveDocumentDebounceWait,
 }: {
-  isActive: boolean;
   name: string;
   text: string;
+  buildError?: string;
   declarationFiles: TextFile[];
+  saveDocumentDebounceWait: number;
 }) {
-  const errorMessage = useOutputStore(
-    useShallow((state) => state.errorMessage)
-  );
   return (
     <TabsContent
       value={name}
       className='mt-0'
       tabIndex={-1} // to prevent focus on Tab trigger (fix for accessibility size issue)
     >
-      {isActive && ( // we unmount the editor when it's not active
-        <EditorMonacoJSMemoized
-          name={name}
-          defaultValue={text}
-          declarationFiles={declarationFiles}
-          errorMessage={errorMessage}
-        />
-      )}
+      <EditorMonacoJSMemoized
+        name={name}
+        defaultValue={text}
+        declarationFiles={declarationFiles}
+        errorMessage={buildError}
+        saveDocumentDebounceWait={saveDocumentDebounceWait}
+      />
     </TabsContent>
   );
 }
@@ -41,14 +37,16 @@ const TabContentMemoized = React.memo(TabContent);
 
 function EditorTabsContent({
   openTabs,
-  activeTab,
   documents,
+  buildErrors,
   declarationFiles,
+  saveDocumentDebounceWait,
 }: {
   openTabs: string[];
-  activeTab: string;
   documents: TextFile[];
+  buildErrors: Record<string, string>;
   declarationFiles: TextFile[];
+  saveDocumentDebounceWait: number;
 }) {
   return openTabs
     .map((name) => documents.find((d) => d.name === name))
@@ -56,10 +54,11 @@ function EditorTabsContent({
     .map((doc: TextFile) => (
       <TabContentMemoized
         key={doc.name}
-        isActive={activeTab === doc.name}
         name={doc.name}
         text={doc.text}
+        buildError={buildErrors[doc.name]}
         declarationFiles={declarationFiles}
+        saveDocumentDebounceWait={saveDocumentDebounceWait}
       />
     ));
 }

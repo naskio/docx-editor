@@ -95,7 +95,7 @@ function reSyncErrorMarker(
           endColumn: range[3],
           message: errorMessage,
           severity: monaco.MarkerSeverity.Error,
-          code: 'docx-editor',
+          code: 'docx',
         },
       ]);
     } else {
@@ -110,11 +110,13 @@ function EditorMonacoJS({
   defaultValue,
   declarationFiles,
   errorMessage,
+  saveDocumentDebounceWait,
 }: {
   name: string;
   defaultValue: string;
   declarationFiles: TextFile[];
   errorMessage?: string;
+  saveDocumentDebounceWait: number;
 }) {
   console.debug(
     `Render EditorMonacoJS (name: ${name}, errorMessage: ${errorMessage})`
@@ -124,7 +126,9 @@ function EditorMonacoJS({
   const { resolvedTheme } = useTheme();
   const saveDocument = useDocumentsStore((state) => state.saveDocument);
   const closeDocument = useDocumentsStore((state) => state.closeDocument);
-  const debouncedSaveDocumentRef = useRef(debounce(saveDocument, 300));
+  const debouncedSaveDocumentRef = useRef(
+    debounce(saveDocument, saveDocumentDebounceWait)
+  );
 
   // setup monaco editor syntax, type checking and IntelliSense
   function handleEditorWillMount(monaco: Monaco) {
@@ -240,10 +244,11 @@ export const EditorMonacoJSMemoized = React.memo(
   (prev, next) => {
     return (
       prev.name === next.name &&
-      prev.errorMessage === next.errorMessage &&
-      prev.declarationFiles === next.declarationFiles
       // defaultValue shouldn't cause re-render because it's only used in the initial render
       // && prev.defaultValue === next.defaultValue
+      prev.declarationFiles === next.declarationFiles &&
+      prev.errorMessage === next.errorMessage &&
+      prev.saveDocumentDebounceWait === next.saveDocumentDebounceWait
     );
   }
 );
