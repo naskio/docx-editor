@@ -38,6 +38,7 @@ export default function HeroPage() {
             <div className='mt-4 flex justify-center gap-4'>
               <Link
                 href='/playground'
+                autoFocus
                 className={cn(
                   buttonVariants({ variant: 'default', size: 'lg' }),
                   `h-14 rounded-4xl px-6 text-lg sm:px-12`
