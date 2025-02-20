@@ -5,7 +5,7 @@ import type { Settings } from '@/lib/types';
 export type SettingsState = Settings;
 
 export type SettingsActions = {
-  setRenderingLibrary: (library: Settings['renderingLibrary']) => void;
+  setSettings: (settings: Settings) => void;
 };
 
 export type SettingsStore = SettingsState & SettingsActions;
@@ -13,6 +13,7 @@ export type SettingsStore = SettingsState & SettingsActions;
 export const initSettingsStore = (): SettingsState => {
   return {
     renderingLibrary: 'docxjs',
+    saveDocumentDebounceWait: 300,
   };
 };
 
@@ -28,7 +29,7 @@ export const createSettingsStore = (
       persist(
         (set) => ({
           ...initState,
-          setRenderingLibrary: (library) => set({ renderingLibrary: library }),
+          setSettings: (settings) => set({ ...settings }),
         }),
         {
           name: 'settings-storage', // name of the item in the storage (must be unique)

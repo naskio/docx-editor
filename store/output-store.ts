@@ -2,13 +2,14 @@ import { devtools } from 'zustand/middleware';
 import { createStore } from 'zustand/vanilla';
 
 export type OutputState = {
-  name?: string; // last successful output file name
-  blob?: Blob; // last successful output file blob
-  errorMessage?: string; // last error message (⚠️ name doesn't necessarily correspond to the errorMessage)
+  name?: string; // last success => document name
+  text?: string; // last success => code used to generate the docx
+  blob?: Blob; // last success => generated docx
+  globalError?: string; // last failed => global error message
+  // ⚠️ name doesn't necessarily correspond to the global error message
 };
 
 export type OutputActions = {
-  resetOutput: () => void;
   setOutput: (partialState: OutputState) => void;
 };
 
@@ -17,8 +18,9 @@ export type OutputStore = OutputState & OutputActions;
 export const initOutputStore = (): OutputState => {
   return {
     name: undefined,
+    text: undefined,
     blob: undefined,
-    errorMessage: undefined,
+    globalError: undefined,
   };
 };
 
@@ -32,7 +34,6 @@ export const createOutputStore = (
   return createStore<OutputStore>()(
     devtools((set) => ({
       ...initState,
-      resetOutput: () => set(initOutputStore()),
       setOutput: (partialState) => set({ ...partialState }),
     }))
   );

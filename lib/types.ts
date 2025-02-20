@@ -22,4 +22,5 @@ type RenderingLibrary = (typeof renderingLibraryOptions)[number];
 
 export type Settings = {
   renderingLibrary: RenderingLibrary;
+  saveDocumentDebounceWait: number; // in milliseconds
 };

@@ -8,6 +8,7 @@ export type DocumentsState = {
   documents: TextFile[];
   openTabs: string[];
   activeTab: string;
+  buildErrors: { [key: string]: string };
 };
 
 export type DocumentsActions = {
@@ -18,6 +19,8 @@ export type DocumentsActions = {
   openDocument: (name: string) => void;
   closeDocument: (name: string) => void;
   setActiveTab: (name: string) => void;
+  setBuildError: (name: string, buildError: string) => void;
+  clearBuildError: (name: string) => void;
 };
 
 export type DocumentsStore = DocumentsState & DocumentsActions;
@@ -27,6 +30,7 @@ export const initDocumentsStore = (): DocumentsState => {
     documents: [],
     openTabs: [],
     activeTab: ``,
+    buildErrors: {},
   };
 };
 
@@ -150,6 +154,16 @@ export const createDocumentsStore = (
               };
             }),
           setActiveTab: (name) => set({ activeTab: name }),
+          setBuildError: (name, buildError) =>
+            set((state) => {
+              state.buildErrors[name] = buildError;
+              return { buildErrors: { ...state.buildErrors } };
+            }),
+          clearBuildError: (name) =>
+            set((state) => {
+              delete state.buildErrors[name];
+              return { buildErrors: { ...state.buildErrors } };
+            }),
         }),
         {
           name: 'documents-storage', // name of the item in the storage (must be unique)
