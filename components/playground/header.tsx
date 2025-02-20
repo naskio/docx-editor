@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { GithubIcon, TwitterIcon } from 'lucide-react';
 import { Logo } from '@/components/logo';
-import { ModeToggle } from '@/components/mode-toggle';
+import { ButtonModeToggle } from '@/components/mode-toggle';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Tooltip,
@@ -27,7 +27,6 @@ export function Header() {
           [
             !!env.repositoryUrl && (
               <Link
-                key={0}
                 href={env.repositoryUrl}
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'icon' })
@@ -43,7 +42,6 @@ export function Header() {
           [
             !!env.twitterUrl && (
               <Link
-                key={1}
                 href={env.twitterUrl}
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'icon' })
@@ -64,7 +62,7 @@ export function Header() {
             </TooltipContent>
           </Tooltip>
         ))}
-        <ModeToggle />
+        <ButtonModeToggle />
       </div>
     </div>
   );

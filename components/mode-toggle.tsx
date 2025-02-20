@@ -37,3 +37,19 @@ export function ModeToggle() {
     </DropdownMenu>
   );
 }
+
+export function ButtonModeToggle() {
+  const { setTheme, resolvedTheme } = useTheme();
+
+  const toggleTheme = React.useCallback(() => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  }, [resolvedTheme, setTheme]);
+
+  return (
+    <Button variant='outline' size='icon' onClick={toggleTheme}>
+      <Sun className='hidden dark:block' />
+      <Moon className='block dark:hidden' />
+      <span className='sr-only'>Toggle theme</span>
+    </Button>
+  );
+}
