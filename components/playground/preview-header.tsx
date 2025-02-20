@@ -91,9 +91,16 @@ function PreviewHeader({
             </TooltipContent>
           </Tooltip>
           <Select value={renderingLibrary} onValueChange={setRenderingLibrary}>
-            <SelectTrigger className='w-[144px]'>
-              <SelectValue placeholder='Select a library' />
-            </SelectTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectTrigger className='w-[144px]'>
+                  <SelectValue placeholder='Select a library' />
+                </SelectTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Select the rendering library</p>
+              </TooltipContent>
+            </Tooltip>
             <SelectContent className='text-sidebar-foreground'>
               {env.renderingLibraries.map((library, index) => (
                 <SelectItem value={library} key={index}>
