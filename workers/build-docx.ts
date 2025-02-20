@@ -8,9 +8,25 @@ self.onmessage = (event: MessageEvent<{ name: string; text: string }>) => {
   const { name, text } = event.data;
   buildDocx(text)
     .then((blob) => {
-      self.postMessage({ status: 'success', name, payload: blob });
+      self.postMessage({
+        status: 'success',
+        payload: {
+          name,
+          text,
+          blob,
+          buildError: undefined,
+        },
+      });
     })
     .catch((error) => {
-      self.postMessage({ status: 'error', name, payload: error });
+      self.postMessage({
+        status: 'error',
+        payload: {
+          name,
+          text,
+          blob: undefined,
+          buildError: error,
+        },
+      });
     });
 };

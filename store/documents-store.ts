@@ -19,8 +19,7 @@ export type DocumentsActions = {
   openDocument: (name: string) => void;
   closeDocument: (name: string) => void;
   setActiveTab: (name: string) => void;
-  setBuildError: (name: string, buildError: string) => void;
-  clearBuildError: (name: string) => void;
+  setBuildError: (name: string, buildError?: string) => void;
 };
 
 export type DocumentsStore = DocumentsState & DocumentsActions;
@@ -156,12 +155,9 @@ export const createDocumentsStore = (
           setActiveTab: (name) => set({ activeTab: name }),
           setBuildError: (name, buildError) =>
             set((state) => {
-              state.buildErrors[name] = buildError;
-              return { buildErrors: { ...state.buildErrors } };
-            }),
-          clearBuildError: (name) =>
-            set((state) => {
-              delete state.buildErrors[name];
+              if (state.buildErrors[name] === buildError) return state; // no change
+              if (buildError) state.buildErrors[name] = buildError;
+              else delete state.buildErrors[name];
               return { buildErrors: { ...state.buildErrors } };
             }),
         }),
