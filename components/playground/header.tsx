@@ -18,7 +18,9 @@ export function Header() {
         Create .docx on the browser
       </p>
       <div className='flex justify-center'>
-        <Logo className='w-[8rem] sm:w-[12rem]' />
+        <Link href='/'>
+          <Logo className='w-[8rem] sm:w-[12rem]' />
+        </Link>
       </div>
       <div className='hidden flex-row justify-end gap-x-2 sm:flex'>
         {[
