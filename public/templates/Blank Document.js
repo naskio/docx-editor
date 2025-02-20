@@ -2,6 +2,7 @@ import * as docx from 'docx'
 
 /**
  * @returns {docx.Document}
+ * @see https://docx.js.org/
  */
 function generateDocument() {
   // Your code goes here
