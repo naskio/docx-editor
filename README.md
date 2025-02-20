@@ -1,5 +1,7 @@
 [![Docx.js Editor](./public/logo.svg)](https://docxjs-editor.vercel.app/)
 
+**[🚀 Get Started](https://docxjs-editor.vercel.app/)**
+
 A browser-based, client-side editor for [docx.js](https://docx.js.org/), providing live previews of your Word documents
 as you code.
 
@@ -18,7 +20,7 @@ as you code.
 - **Advanced syntax highlighting** for improved code readability
 - **Intelligent code completion** with [docx.js](https://docx.js.org/) API context awareness
 - **Real-time error detection and linting** to easily spot and fix issues
-- **Intuitive Responsive Interface** with light/dark mode support
+- **Intuitive responsive interface** with light/dark mode support
 - **Keyboard shortcuts** for faster editing
 - **Auto-saving** to browser local storage - so you never lose your work again
 - **Multi-tab support** for working on multiple documents simultaneously
