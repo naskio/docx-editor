@@ -1,4 +1,4 @@
-![Docx.js Editor](./public/logo.svg)
+[![Docx.js Editor](./public/logo.svg)](https://docxjs-editor.vercel.app/)
 
 A browser-based, client-side editor for [docx.js](https://docx.js.org/), providing live previews of your Word documents
 as you code.
