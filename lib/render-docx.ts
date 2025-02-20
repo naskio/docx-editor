@@ -77,6 +77,9 @@ async function uploadDocxFile(
   code?: string,
   file?: Blob
 ): Promise<string> {
+  if (env.output === 'export') {
+    throw new Error(`Upload file is not supported!`);
+  }
   const formData = new FormData();
   let endpoint: string | undefined;
   if (file) {
@@ -118,7 +121,7 @@ export async function renderDocx(
   text: string,
   blob: Blob,
   library: Settings['renderingLibrary'],
-  baseUrl: string // e.g. 'http://localhost:3000' or 'http://localhost:3000/docx-editor'
+  baseUrl: string // e.g. 'http://localhost:3000' or 'http://localhost:3000/basePath'
 ) {
   const renderer: Record<
     Settings['renderingLibrary'],
