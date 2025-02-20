@@ -14,8 +14,8 @@ const envSchema = z.object({
     .refine(
       (value) => !value || (value.startsWith(`/`) && !value.endsWith(`/`))
     ),
-  repositoryUrl: z.string().optional(),
-  twitterUrl: z.string().optional(),
+  repositoryUrl: z.string().url().optional(),
+  twitterUrl: z.string().url().optional(),
   renderingLibraries: z
     .string()
     .default(`docxjs,mammoth.js`)
